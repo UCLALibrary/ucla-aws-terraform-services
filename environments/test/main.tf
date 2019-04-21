@@ -56,7 +56,9 @@ resource "aws_route" "internet_access" {
   route_table_id         = "${aws_vpc.main.main_route_table_id}"
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = "${aws_internet_gateway.gw.id}"
-}resource "aws_security_group" "allow_web" {
+}
+
+resource "aws_security_group" "allow_web" {
   name          = "allow_web"
   description   = "All public facing traffic to 80/443"
   vpc_id        = "${aws_vpc.main.id}"
@@ -163,6 +165,12 @@ resource "aws_ecs_task_definition" "cantaloupe_stable" {
   requires_compatibilities = ["FARGATE"]
   cpu = 1024
   memory = 2048
+  execution_role_arn       = "${aws_iam_role.ecs_execution_role.arn}"
+  task_role_arn            = "${aws_iam_role.ecs_execution_role.arn}"
+  depends_on = [
+    "aws_iam_role.ecs_execution_role",
+    "aws_iam_role_policy.ecs_execution_role_policy"
+  ]
 
   container_definitions = <<DEFINITION
 [
@@ -188,40 +196,30 @@ DEFINITION
 
 }
 
-data "aws_iam_policy_document" "ecs_service_role" {
-  statement {
-    effect = "Allow"
-    actions = ["sts:AssumeRole"]
-    principals {
-      type = "Service"
-      identifiers = ["ecs.amazonaws.com"]
-    }
-  }
+#data "aws_iam_policy_document" "ecs_service_role" {
+#  statement {
+#    effect = "Allow"
+#    actions = ["sts:AssumeRole"]
+#    principals {
+#      type = "Service"
+#      identifiers = ["ecs.amazonaws.com"]
+#    }
+#  }
+#}
+
+resource "aws_iam_role" "ecs_execution_role" {
+  name               = "ecs-execution-role"
+  assume_role_policy = "${file("ecs-role-policy.json")}"
 }
 
-resource "aws_iam_role" "ecs_role" {
-  name               = "ecs_role"
-  assume_role_policy = "${data.aws_iam_policy_document.ecs_service_role.json}"
+resource "aws_iam_role_policy" "ecs_execution_role_policy" {
+  name   = "ecs_execution_role_policy"
+  policy = "${file("ecs-execution-role-policy.json")}"
+  role   = "${aws_iam_role.ecs_execution_role.id}"
 }
 
-data "aws_iam_policy_document" "ecs_service_policy" {
-  statement {
-    effect = "Allow"
-    resources = ["*"]
-    actions = [
-      "elasticloadbalancing:Describe*",
-      "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
-      "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
-      "ec2:Describe*",
-      "ec2:AuthorizeSecurityGroupIngress"
-    ]
-  }
-}
-
-resource "aws_iam_role_policy" "ecs_service_role_policy" {
-  name   = "ecs_service_role_policy"
-  policy = "${data.aws_iam_policy_document.ecs_service_policy.json}"
-  role   = "${aws_iam_role.ecs_role.id}"
+resource "aws_iam_service_linked_role" "AWSServiceRoleForECS" {
+  aws_service_name = "ecs.amazonaws.com"
 }
 
 resource "aws_ecs_service" "cantaloupe_stable" {
@@ -246,7 +244,6 @@ resource "aws_ecs_service" "cantaloupe_stable" {
     "aws_lb_listener.cantaloupe_stable_fe",
     "aws_ecs_cluster.cantaloupe_stable",
     "aws_ecs_task_definition.cantaloupe_stable",
-    "aws_iam_role_policy.ecs_service_role_policy"
-
+    "aws_iam_service_linked_role.AWSServiceRoleForECS"
   ]
 }
