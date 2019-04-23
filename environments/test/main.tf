@@ -112,6 +112,13 @@ resource "aws_security_group" "cantaloupe_stable_alb_ecs" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
 }
   
 resource "aws_security_group" "cantaloupe_stable_container" {
@@ -125,6 +132,13 @@ resource "aws_security_group" "cantaloupe_stable_container" {
     to_port     = "${var.cantaloupe_stable_app_port}"
     protocol    = "tcp"
     security_groups = ["${aws_security_group.cantaloupe_stable_alb_ecs.id}"]
+  }
+
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
   }
 }
 
@@ -176,7 +190,6 @@ resource "aws_ecs_task_definition" "cantaloupe_stable" {
 [
   {
     "name": "cantaloupe-stable",
-    "cpu": 1,
     "memory": 2048,
     "image": "${var.cantaloupe_stable_image}",
     "networkMode": "awsvpc",
@@ -232,6 +245,7 @@ resource "aws_ecs_service" "cantaloupe_stable" {
   network_configuration {
     security_groups = ["${aws_security_group.cantaloupe_stable_container.id}"]
     subnets         = ["${aws_subnet.public.*.id}"]
+    assign_public_ip = true
   }
 
   load_balancer {
