@@ -3,7 +3,7 @@ terraform {
     bucket = "softwaredev-services-terraform"
     key    = "test-cantaloupe/terraform-codebuild.tfstate"
     region = "us-west-2"
-    shared_credentials_file = "awscredfile"
+    shared_credentials_file = "~/.aws/credentials"
     profile = "services"
   }
 }
