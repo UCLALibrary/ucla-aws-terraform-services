@@ -79,9 +79,9 @@ POLICY
 }
 
 resource "aws_codebuild_project" "bucketeer" {
-  name          = "bucketeer"
+  name          = "docker-bucketeer"
   description   = "Codebuild Project for docker bucketeer"
-  build_timeout = "5"
+  build_timeout = "20"
   service_role  = "${aws_iam_role.codebuild_generic.arn}"
   badge_enabled = true
 
