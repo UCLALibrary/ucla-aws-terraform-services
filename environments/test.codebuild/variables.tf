@@ -20,3 +20,4 @@ variable "bucketeer_s3_bucket" {}
 variable "services_docker_registry_username" {}
 variable "services_dockerhub_password" {}
 variable "services_dockerhub_username" {}
+

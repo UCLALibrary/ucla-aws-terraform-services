@@ -153,3 +153,4 @@ resource "aws_ssm_parameter" "services_dockerhub_username" {
   type        = "SecureString"
   value       = "${var.services_dockerhub_username}"
 }
+
