@@ -93,6 +93,7 @@ resource "aws_codebuild_project" "bucketeer" {
     compute_type                = "BUILD_GENERAL1_SMALL"
     image                       = "aws/codebuild/java:openjdk-11-1.7.0"
     type                        = "LINUX_CONTAINER"
+    privileged_mode             = true
   }
 
   source {
