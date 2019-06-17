@@ -1,6 +1,7 @@
 # CHEATSHEET
 
 ```
+alias tf='terraform'
 tf init
 aws configure
 tf plan -out currentplan -var-file=localsecrets.tfvars
