@@ -41,4 +41,14 @@ variable "vpc_cidr_block" {
   default = "172.20.0.0/16"
 }
 
+variable "subnet_count" {
+  default = 2
+}
 
+variable "iiif_app_name" {
+  default = "iiif"
+}
+
+variable "subnet_int" {
+  default = 30
+}

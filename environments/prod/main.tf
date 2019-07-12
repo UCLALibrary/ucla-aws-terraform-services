@@ -15,8 +15,16 @@ provider "aws" {
 
 module "vpc" {
   source            = "../../modules/vpc"
-  custom_cidr_block = "172.17.0.0/16"
-  subnet_count      = 3
+  vpc_cidr_block    = "${var.vpc_cidr_block}"
+  subnet_count      = "${var.subnet_count}"
+  subnet_int        = "${var.subnet_int}"
+}
+
+module "alb" {
+  source   = "../../modules/alb"
+  app_name = "${var.iiif_app_name}"
+  vpc_main_id = "${module.vpc.vpc_main_id}"
+  vpc_subnet_ids = "${module.vpc.vpc_subnet_ids}"
 }
 
 #module "cantaloupe" {
