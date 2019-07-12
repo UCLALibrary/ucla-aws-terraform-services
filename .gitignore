@@ -2,3 +2,4 @@
 .sharecreds
 *.tfstate*
 *.tfvars
+*.plan
