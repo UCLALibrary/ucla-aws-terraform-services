@@ -27,10 +27,10 @@ module "alb" {
   vpc_subnet_ids = "${module.vpc.vpc_subnet_ids}"
 }
 
-#module "cantaloupe" {
-#  source = "../../modules/cantaloupe"
-#  app_port = 8182
-#  registry_url = "registry.hub.docker.com/uclalibrary/cantaloupe-ucla:4.1.1"
-#  app_cidr_block = "172.17.0.0/16"
-#  app_name = "iiif.library.ucla.edu"
-#}
+module "cantaloupe" {
+  source = "../../modules/cantaloupe"
+  app_port = "${var.iiif_app_port}"
+  registry_url = "registry.hub.docker.com/uclalibrary/cantaloupe-ucla:4.1.1"
+  app_cidr_block = "172.17.0.0/16"
+  app_name = "${var.iiif_app_name}"
+}

@@ -1,65 +1,5 @@
-terraform {
-  backend "s3" {
-    bucket = "softwaredev-services-terraform"
-    key    = "test-cantaloupe/terraform.tfstate"
-    region = "us-west-2"
-    shared_credentials_file = "awscredfile"
-    profile = "services"
-  }
-}
-
-provider "aws" {
-  shared_credentials_file = "${var.cred_file}"
-  profile                 = "${var.cred_profile}"
-  region                  = "${var.region}"
-}
-
-# Populate state file with AZ info.
-
-data "aws_availability_zones" "available" {}
-
-#############################################################################################################
-# Create VPC network 172.20.0.0/16
-#############################################################################################################
-resource "aws_vpc" "main" {
-  cidr_block = "172.20.0.0/16"
-}
-
-#############################################################################################################
-# Create public subnet to attach Internet Gateway route
-# 172.20.30.0/24
-#############################################################################################################
-resource "aws_subnet" "public" {
-  count                   = 2
-  vpc_id                  = "${aws_vpc.main.id}"
-  cidr_block              = "${cidrsubnet(aws_vpc.main.cidr_block, 8, 30 + count.index)}"
-  availability_zone       = "${data.aws_availability_zones.available.names[count.index]}"
-  map_public_ip_on_launch = true
-  
-
-  tags = {
-    Name = "public_network"
-  }
-}
-
-#############################################################################################################
-# Attach internet gateway to created VPC
-#############################################################################################################
-resource "aws_internet_gateway" "gw" {
-  vpc_id = "${aws_vpc.main.id}"
-}
-
-#############################################################################################################
-# Set main route table for VPC to Internet Gateway
-#############################################################################################################
-resource "aws_route" "internet_access" {
-  route_table_id         = "${aws_vpc.main.main_route_table_id}"
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = "${aws_internet_gateway.gw.id}"
-}
-
 resource "aws_security_group" "allow_web" {
-  name          = "allow_web"
+  name          = "${var.app_name}-allow_web"
   description   = "All public facing traffic to 80/443"
   vpc_id        = "${aws_vpc.main.id}"
   depends_on    = ["aws_vpc.main"]
@@ -79,23 +19,9 @@ resource "aws_security_group" "allow_web" {
   }
 }
 
-resource "aws_security_group" "allow_restricted_ssh" {
-  name          = "allow_restricted_ssh"
-  description   = "Allow restricted subnets to SSH into systems"
-  vpc_id        = "${aws_vpc.main.id}"
-  depends_on    = ["aws_vpc.main"]
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["164.67.152.0/24", "164.67.40.0/24", "165.227.26.38/32"]
-  }
-}
-
-resource "aws_security_group" "cantaloupe_stable_alb_ecs" {
-  name = "cantaloupe-stable-alb-ecs"
-  description = "Allow HTTP/HTTPS traffic to Cantaloupe Stable load balancers"
+resource "aws_security_group" "cantaloupe_alb_ecs" {
+  name          = "{var.app_name}-alb-access"
+  description   = "Allow HTTP/HTTPS traffic to Cantaloupe Stable load balancers"
   vpc_id        = "${aws_vpc.main.id}"
   depends_on    = ["aws_vpc.main"]
 
@@ -121,17 +47,17 @@ resource "aws_security_group" "cantaloupe_stable_alb_ecs" {
   }
 }
   
-resource "aws_security_group" "cantaloupe_stable_container" {
-  name = "cantaloupe-stable-container"
-  description = "Whitelist Cantaloupe ALB SG to access application port on container"
+resource "aws_security_group" "cantaloupe_container" {
+  name          = "{$var.app_name}-container-access"
+  description   = "Whitelist Cantaloupe ALB SG to access application port on container"
   vpc_id        = "${aws_vpc.main.id}"
   depends_on    = ["aws_security_group.cantaloupe_stable_alb_ecs", "aws_vpc.main"]
 
   ingress {
-    from_port   = "${var.cantaloupe_stable_app_port}"
-    to_port     = "${var.cantaloupe_stable_app_port}"
-    protocol    = "tcp"
-    security_groups = ["${aws_security_group.cantaloupe_stable_alb_ecs.id}"]
+    from_port       = "${var.app_port}"
+    to_port         = "${var.app_port}"
+    protocol        = "tcp"
+    security_groups = ["${aws_security_group.cantaloupe_alb_ecs.id}"]
   }
 
   egress {
@@ -143,7 +69,7 @@ resource "aws_security_group" "cantaloupe_stable_container" {
 }
 
 resource "aws_lb" "cantaloupe_stable_alb" {
-  name            = "cantaloupe-stable-alb"
+  name            = "cantaloupetable-alb"
   internal        = false
   load_balancer_type = "application"
   subnets         = ["${aws_subnet.public.*.id}"]
