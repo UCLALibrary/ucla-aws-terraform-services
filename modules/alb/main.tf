@@ -19,7 +19,7 @@ resource "aws_security_group" "allow_web" {
 }
 
 resource "aws_security_group" "alb_access" {
-  name          = "{var.app_name}-alb-access"
+  name          = "${var.app_name}-alb-access"
   description   = "Allow HTTP/HTTPS traffic to load balancers"
   vpc_id        = "${var.vpc_main_id}"
 
@@ -45,7 +45,7 @@ resource "aws_security_group" "alb_access" {
   }
 }
   
-resource "aws_lb" "alb" {
+resource "aws_lb" "alb_main" {
   name               = "${var.app_name}-alb"
   internal           = false
   load_balancer_type = "application"

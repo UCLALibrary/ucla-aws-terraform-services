@@ -49,6 +49,30 @@ variable "iiif_app_name" {
   default = "iiif"
 }
 
+variable "iiif_app_port" {
+  default = 8182
+}
+
 variable "subnet_int" {
   default = 30
+}
+
+variable "vpc_main_id" {
+  default = null
+}
+
+variable "cantaloupe_memory" {
+  default = 2048
+}
+
+variable "cantaloupe_cpu" {
+  default = 1024
+}
+
+variable "alb_main_sg_id" {
+  default = null
+}
+
+variable "dockerauth_arn" {
+  default = "arn:aws:iam::0123456789:policy/dockerauth"
 }

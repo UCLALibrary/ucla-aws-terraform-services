@@ -72,3 +72,7 @@ variable "cantaloupe_heapsize" {
 variable "alb_main_sg_id" {
   default = null
 }
+
+variable "dockerauth_arn" {
+  default = "arn:aws:iam::0123456789:policy/dockerhubauth"
+}

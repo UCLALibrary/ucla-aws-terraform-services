@@ -111,6 +111,11 @@ resource "aws_iam_role" "ecs_execution_role" {
   assume_role_policy = "${file("policies/ecs-role-policy.json")}"
 }
 
+resource "aws_iam_role_policy_attachment" "iam_attach_docker_auth" {
+  role       = "${aws_iam_role.ecs_execution_role.name}"
+  policy_arn = "${var.dockerauth_arn}"
+}
+
 resource "aws_iam_role_policy" "ecs_execution_role_policy" {
   name   = "${var.app_name}-ecs_execution_role_policy"
   policy = "${file("policies/ecs-execution-role-policy.json")}"
@@ -140,10 +145,10 @@ resource "aws_ecs_service" "cantaloupe" {
     container_port   = "${var.app_port}"
   }
 
-#  depends_on = [
-#    "aws_lb_listener.cantaloupe_stable_fe",
-#    "aws_ecs_cluster.cantaloupe_stable",
-#    "aws_ecs_task_definition.cantaloupe_stable",
+  depends_on = [
+    "aws_lb_listener.cantaloupe_listener",
+    "aws_ecs_cluster.cantaloupe",
+    "aws_ecs_task_definition.cantaloupe_definition"
 #    "aws_iam_service_linked_role.AWSServiceRoleForECS"
-#  ]
+  ]
 }
