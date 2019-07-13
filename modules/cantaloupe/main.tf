@@ -1,63 +1,13 @@
-resource "aws_security_group" "allow_web" {
-  name          = "${var.app_name}-allow_web"
-  description   = "All public facing traffic to 80/443"
-  vpc_id        = "${aws_vpc.main.id}"
-  depends_on    = ["aws_vpc.main"]
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_security_group" "cantaloupe_alb_ecs" {
-  name          = "{var.app_name}-alb-access"
-  description   = "Allow HTTP/HTTPS traffic to Cantaloupe Stable load balancers"
-  vpc_id        = "${aws_vpc.main.id}"
-  depends_on    = ["aws_vpc.main"]
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-}
-  
-resource "aws_security_group" "cantaloupe_container" {
-  name          = "{$var.app_name}-container-access"
+resource "aws_security_group" "cantaloupe_container_vpc_access" {
+  name          = "${var.app_name}-container-access"
   description   = "Whitelist Cantaloupe ALB SG to access application port on container"
-  vpc_id        = "${aws_vpc.main.id}"
-  depends_on    = ["aws_security_group.cantaloupe_stable_alb_ecs", "aws_vpc.main"]
+  vpc_id        = "${var.vpc_main_id}"
 
   ingress {
     from_port       = "${var.app_port}"
     to_port         = "${var.app_port}"
     protocol        = "tcp"
-    security_groups = ["${aws_security_group.cantaloupe_alb_ecs.id}"]
+    security_groups = ["${var.alb_main_sg_id}"]
   }
 
   egress {
@@ -68,46 +18,39 @@ resource "aws_security_group" "cantaloupe_container" {
   }
 }
 
-resource "aws_lb" "cantaloupe_stable_alb" {
-  name            = "cantaloupetable-alb"
-  internal        = false
-  load_balancer_type = "application"
-  subnets         = ["${aws_subnet.public.*.id}"]
-  security_groups = ["${aws_security_group.cantaloupe_stable_alb_ecs.id}"]
-}
 
-resource "aws_lb_target_group" "cantaloupe_stable_tg" {
-  name        = "cantaloupe-stable-tg"
+resource "aws_lb_target_group" "cantaloupe_tg" {
+  name        = "${var.app_name}-tg"
   protocol    = "HTTP"
-  vpc_id      = "${aws_vpc.main.id}"
+  vpc_id      = "${var.vpc_main_id}"
   target_type = "ip"
   port        = 80
 }
 
-resource "aws_lb_listener" "cantaloupe_stable_fe" {
-  load_balancer_arn = "${aws_lb.cantaloupe_stable_alb.id}"
+resource "aws_lb_listener" "cantaloupe_listener" {
+  load_balancer_arn = "${var.alb_main_id}"
   port              = "80"
   protocol          = "HTTP"
 
   default_action {
-    target_group_arn = "${aws_lb_target_group.cantaloupe_stable_tg.id}"
+    target_group_arn = "${aws_lb_target_group.cantaloupe_tg.id}"
     type             = "forward"
   }
 }
 
-resource "aws_ecs_cluster" "cantaloupe_stable" {
-  name = "cantaloupe-stable"
+resource "aws_ecs_cluster" "cantaloupe" {
+  name = "${var.app_name}-cantaloupe"
 }
 
-resource "aws_ecs_task_definition" "cantaloupe_stable" {
-  family                   = "cantaloupe-stable"
+resource "aws_ecs_task_definition" "cantaloupe_definition" {
+  family                   = "${var.app_name}-cantaloupe"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu = 1024
-  memory = 2048
+  cpu                      = "${var.cantaloupe_cpu}"
+  memory                   = "${var.cantaloupe_memory}"
   execution_role_arn       = "${aws_iam_role.ecs_execution_role.arn}"
   task_role_arn            = "${aws_iam_role.ecs_execution_role.arn}"
-  depends_on = [
+  depends_on               = [
     "aws_iam_role.ecs_execution_role",
     "aws_iam_role_policy.ecs_execution_role_policy"
   ]
@@ -115,19 +58,36 @@ resource "aws_ecs_task_definition" "cantaloupe_stable" {
   container_definitions = <<DEFINITION
 [
   {
-    "name": "cantaloupe-stable",
-    "memory": 2048,
-    "image": "${var.cantaloupe_stable_image}",
+    "name": "${var.app_name}-cantaloupe",
+    "memory": ${var.cantaloupe_memory},
+    "image": "${var.registry_url}",
     "networkMode": "awsvpc",
     "portMappings": [
       {
-        "containerPort": ${var.cantaloupe_stable_app_port},
-        "hostPort": ${var.cantaloupe_stable_app_port}
+        "containerPort": ${var.app_port},
+        "hostPort": ${var.app_port}
       }
     ],
     "environment": [
       { "name" : "CANTALOUPE_ENDPOINT_ADMIN_ENABLED", "value" : "true" },
-      { "name" : "CANTALOUPE_ENDPOINT_ADMIN_SECRET", "value" :  "secretpassword" }
+      { "name" : "CANTALOUPE_ENDPOINT_ADMIN_SECRET", "value" :  "secretpassword" },
+      { "name" : "CANTALOUPE_CACHE_SERVER_DERIVATIVE_ENABLED", "value" : "true" },
+      { "name" : "CANTALOUPE_CACHE_SERVER_DERIVATIVE", "value" : "S3Cache" },
+      { "name" : "CANTALOUPE_CACHE_SERVER_DERIVATIVE_TTL_SECONDS", "value" : "0" },
+      { "name" : "CANTALOUPE_CACHE_SERVER_PURGE_MISSING", "value" : "true" },
+      { "name" : "CANTALOUPE_PROCESSOR_SELECTION_STRATEGY", "value" : "ManualSelectionStrategy" },
+      { "name" : "CANTALOUPE_MANUAL_PROCESSOR_JP2", "value" : "KakaduNativeProcessor" },
+      { "name" : "CANTALOUPE_S3CACHE_ACCESS_KEY_ID", "value" : "${var.s3_cache_access_key}" },
+      { "name" : "CANTALOUPE_S3CACHE_SECRET_KEY", "value" : "${var.s3_cache_secret_key}" },
+      { "name" : "CANTALOUPE_S3CACHE_ENDPOINT", "value" : "${var.s3_cache_endpoint}" },
+      { "name" : "CANTALOUPE_S3CACHE_BUCKET_NAME", "value" : "${var.s3_cache_bucket}" },
+      { "name" : "CANTALOUPE_S3SOURCE_ACCESS_KEY_ID", "value" : "${var.s3_source_access_key}" },
+      { "name" : "CANTALOUPE_S3SOURCE_SECRET_KEY", "value" : "${var.s3_source_secret_key}" },
+      { "name" : "CANTALOUPE_S3SOURCE_ENDPOINT", "value" : "${var.s3_source_endpoint}" },
+      { "name" : "CANTALOUPE_S3SOURCE_BASICLOOKUPSTRATEGY_BUCKET_NAME", "value" : "${var.s3_source_bucket}" },
+      { "name" : "CANTALOUPE_S3SOURCE_BASICLOOKUPSTRATEGY_PATH_SUFFIX", "value" : ".jpx" },
+      { "name" : "CANTALOUPE_SOURCE_STATIC", "value" : "S3Source" },
+      { "name" : "JAVA_HEAP_SIZE", "value" : "${var.cantaloupe_heapsize}" }
     ]
   }
 ]
@@ -135,55 +95,55 @@ DEFINITION
 
 }
 
-#data "aws_iam_policy_document" "ecs_service_role" {
-#  statement {
-#    effect = "Allow"
-#    actions = ["sts:AssumeRole"]
-#    principals {
-#      type = "Service"
-#      identifiers = ["ecs.amazonaws.com"]
-#    }
-#  }
-#}
+data "aws_iam_policy_document" "ecs_service_role" {
+  statement {
+    effect = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type = "Service"
+      identifiers = ["ecs.amazonaws.com"]
+    }
+  }
+}
 
 resource "aws_iam_role" "ecs_execution_role" {
-  name               = "ecs-execution-role"
-  assume_role_policy = "${file("ecs-role-policy.json")}"
+  name               = "${var.app_name}-ecs-execution-role"
+  assume_role_policy = "${file("policies/ecs-role-policy.json")}"
 }
 
 resource "aws_iam_role_policy" "ecs_execution_role_policy" {
-  name   = "ecs_execution_role_policy"
-  policy = "${file("ecs-execution-role-policy.json")}"
+  name   = "${var.app_name}-ecs_execution_role_policy"
+  policy = "${file("policies/ecs-execution-role-policy.json")}"
   role   = "${aws_iam_role.ecs_execution_role.id}"
 }
 
-resource "aws_iam_service_linked_role" "AWSServiceRoleForECS" {
-  aws_service_name = "ecs.amazonaws.com"
-}
+#resource "aws_iam_service_linked_role" "AWSServiceRoleForECS" {
+#  aws_service_name = "ecs.amazonaws.com"
+#}
 
-resource "aws_ecs_service" "cantaloupe_stable" {
-  name            = "cantaloupe-stable"
-  cluster         = "${aws_ecs_cluster.cantaloupe_stable.id}"
-  task_definition = "${aws_ecs_task_definition.cantaloupe_stable.arn}"
-  desired_count   = "${var.cantaloupe_stable_app_count}"
+resource "aws_ecs_service" "cantaloupe" {
+  name            = "${var.app_name}-cantaloupe-service"
+  cluster         = "${aws_ecs_cluster.cantaloupe.id}"
+  task_definition = "${aws_ecs_task_definition.cantaloupe_definition.arn}"
+  desired_count   = "${var.container_count}"
   launch_type     = "FARGATE"
 
   network_configuration {
-    security_groups = ["${aws_security_group.cantaloupe_stable_container.id}"]
-    subnets         = ["${aws_subnet.public.*.id}"]
+    security_groups = ["${aws_security_group.cantaloupe_container_vpc_access.id}"]
+    subnets         = "${var.vpc_subnet_ids}"
     assign_public_ip = true
   }
 
   load_balancer {
-    target_group_arn = "${aws_lb_target_group.cantaloupe_stable_tg.id}"
-    container_name   = "cantaloupe-stable"
-    container_port   = "${var.cantaloupe_stable_app_port}"
+    target_group_arn = "${aws_lb_target_group.cantaloupe_tg.id}"
+    container_name   = "${var.app_name}-cantaloupe"
+    container_port   = "${var.app_port}"
   }
 
-  depends_on = [
-    "aws_lb_listener.cantaloupe_stable_fe",
-    "aws_ecs_cluster.cantaloupe_stable",
-    "aws_ecs_task_definition.cantaloupe_stable",
-    "aws_iam_service_linked_role.AWSServiceRoleForECS"
-  ]
+#  depends_on = [
+#    "aws_lb_listener.cantaloupe_stable_fe",
+#    "aws_ecs_cluster.cantaloupe_stable",
+#    "aws_ecs_task_definition.cantaloupe_stable",
+#    "aws_iam_service_linked_role.AWSServiceRoleForECS"
+#  ]
 }
