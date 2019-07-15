@@ -18,7 +18,6 @@ resource "aws_security_group" "cantaloupe_container_vpc_access" {
   }
 }
 
-
 resource "aws_lb_target_group" "cantaloupe_tg" {
   name        = "${var.app_name}-tg"
   protocol    = "HTTP"

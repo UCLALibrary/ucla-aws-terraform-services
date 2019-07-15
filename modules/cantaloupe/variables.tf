@@ -35,11 +35,11 @@ variable "cantaloupe_memory" {
 }
 
 variable "s3_source_endpoint" {
-  default = "us-west-2"
+  default = "s3.us-west-2.amazonaws.com"
 }
 
 variable "s3_cache_endpoint" {
-  default = "us-west-2"
+  default = "s3.us-west-2.amazonaws.com"
 }
 
 variable "s3_cache_access_key" {
