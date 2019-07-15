@@ -76,3 +76,7 @@ variable "alb_main_sg_id" {
 variable "dockerauth_arn" {
   default = "arn:aws:iam::0123456789:policy/dockerauth"
 }
+
+variable "dockerhubauth_credentials_arn" {
+  default = "arn:aws:iam::0123456789:policy/dockerauth"
+}

@@ -28,15 +28,16 @@ module "alb" {
 }
 
 module "cantaloupe" {
-  source            = "../../modules/cantaloupe"
-  vpc_main_id       = "${module.vpc.vpc_main_id}"
-  vpc_subnet_ids    = "${module.vpc.vpc_subnet_ids}"
-  alb_main_id       = "${module.alb.alb_main_id}"
-  alb_main_sg_id    = "${module.alb.alb_main_sg_id}"
-  app_port          = "${var.iiif_app_port}"
-  registry_url      = "registry.hub.docker.com/uclalibrary/cantaloupe-ucla:4.1.1"
-  app_name          = "${var.iiif_app_name}"
-  cantaloupe_cpu    = "${var.cantaloupe_cpu}"
-  cantaloupe_memory = "${var.cantaloupe_memory}"
-  dockerauth_arn    = "${var.dockerauth_arn}"
+  source                        = "../../modules/cantaloupe"
+  vpc_main_id                   = "${module.vpc.vpc_main_id}"
+  vpc_subnet_ids                = "${module.vpc.vpc_subnet_ids}"
+  alb_main_id                   = "${module.alb.alb_main_id}"
+  alb_main_sg_id                = "${module.alb.alb_main_sg_id}"
+  app_port                      = "${var.iiif_app_port}"
+  registry_url                  = "registry.hub.docker.com/uclalibrary/cantaloupe-ucla:4.1.1"
+  app_name                      = "${var.iiif_app_name}"
+  cantaloupe_cpu                = "${var.cantaloupe_cpu}"
+  cantaloupe_memory             = "${var.cantaloupe_memory}"
+  dockerauth_arn                = "${var.dockerauth_arn}"
+  dockerhubauth_credentials_arn = "${var.dockerhubauth_credentials_arn}"
 }
