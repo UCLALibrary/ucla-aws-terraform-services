@@ -59,6 +59,7 @@ resource "aws_ecs_task_definition" "cantaloupe_definition" {
 [
   {
     "name": "${var.app_name}-cantaloupe",
+    "repositoryCredentials": { "credentialsParameter": "${var.dockerhubauth_credentials_arn}" },
     "memory": ${var.cantaloupe_memory},
     "image": "${var.registry_url}",
     "networkMode": "awsvpc",
@@ -122,10 +123,6 @@ resource "aws_iam_role_policy" "ecs_execution_role_policy" {
   role   = "${aws_iam_role.ecs_execution_role.id}"
 }
 
-#resource "aws_iam_service_linked_role" "AWSServiceRoleForECS" {
-#  aws_service_name = "ecs.amazonaws.com"
-#}
-
 resource "aws_ecs_service" "cantaloupe" {
   name            = "${var.app_name}-cantaloupe-service"
   cluster         = "${aws_ecs_cluster.cantaloupe.id}"
@@ -149,6 +146,5 @@ resource "aws_ecs_service" "cantaloupe" {
     "aws_lb_listener.cantaloupe_listener",
     "aws_ecs_cluster.cantaloupe",
     "aws_ecs_task_definition.cantaloupe_definition"
-#    "aws_iam_service_linked_role.AWSServiceRoleForECS"
   ]
 }
