@@ -11,6 +11,7 @@ After editing the vars file, you can run the bootstrap script
 
 ```
 ./bootstrap.sh
+terraform apply current.plan # confirm that you're OK with the plan generated first!
 ```
 
 This will generate a plan file for you to apply

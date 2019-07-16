@@ -2,7 +2,7 @@
 LOCAL_SECRET_FILE="local.secrets"
 VARS_FILE="test.tfvars"
 PLAN_FILE="current.plan"
-WORKSPACE="test-ephemeral"
+WORKSPACE="test"
 
 terraform init
 terraform workspace select $WORKSPACE
