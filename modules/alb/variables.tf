@@ -1,6 +1,7 @@
 variable "tfstate_bucket_name" {
   default = "services-terraform"
 }
+
 variable "cred_file" {
   default = "~/.aws/credentials/"
 }
@@ -24,3 +25,4 @@ variable "vpc_main_id" {
 variable "vpc_subnet_ids" {
   default = null
 }
+
