@@ -34,6 +34,10 @@ variable "cantaloupe_memory" {
   default = 2048
 }
 
+variable "cantaloupe_source_static" {
+  default = "FilesystemSource"
+}
+
 variable "s3_source_endpoint" {
   default = "s3.us-west-2.amazonaws.com"
 }
@@ -43,30 +47,66 @@ variable "s3_cache_endpoint" {
 }
 
 variable "s3_cache_access_key" {
-  default = "dummyval"
+  default = ""
 }
 
 variable "s3_cache_secret_key" {
-  default = "dummyval"
+  default = ""
 }
 
 variable "s3_source_access_key" {
-  default = "dummyval"
+  default = ""
 }
 variable "s3_source_secret_key" {
-  default = "dummyval"
+  default = ""
 }
 
 variable "s3_source_bucket" {
-  default = "dummy-cantaloupe-source-bucket"
+  default = ""
 }
 
 variable "s3_cache_bucket" {
-  default = "dummy-cantaloupe-cache-bucket"
+  default = ""
 }
 
 variable "cantaloupe_heapsize" {
   default = "2g"
+}
+
+variable "cantaloupe_enable_admin" {
+  default = "true"
+}
+
+variable "cantaloupe_admin_secret" {
+  default = "secretpassword"
+}
+
+variable "cantaloupe_enable_cache_server" {
+  default = "false"
+}
+
+variable "cantaloupe_cache_server_derivative" {
+  default = ""
+}
+
+variable "cantaloupe_cache_server_derivative_ttl" {
+  default = "2592000"
+}
+
+variable "cantaloupe_cache_server_purge_missing" {
+  default = "false"
+}
+
+variable "cantaloupe_processor_selection_strategy" {
+  default = "AutomaticSelectionStrategy"
+}
+
+variable "cantaloupe_manual_processor_jp2" {
+  default = "KakaduNativeProcessor"
+}
+
+variable "s3_source_basiclookup_suffix" {
+  default = ""
 }
 
 variable "alb_main_sg_id" {

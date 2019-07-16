@@ -69,14 +69,14 @@ resource "aws_ecs_task_definition" "cantaloupe_definition" {
       }
     ],
     "environment": [
-      { "name" : "CANTALOUPE_ENDPOINT_ADMIN_ENABLED", "value" : "true" },
-      { "name" : "CANTALOUPE_ENDPOINT_ADMIN_SECRET", "value" :  "secretpassword" },
-      { "name" : "CANTALOUPE_CACHE_SERVER_DERIVATIVE_ENABLED", "value" : "true" },
-      { "name" : "CANTALOUPE_CACHE_SERVER_DERIVATIVE", "value" : "S3Cache" },
-      { "name" : "CANTALOUPE_CACHE_SERVER_DERIVATIVE_TTL_SECONDS", "value" : "0" },
-      { "name" : "CANTALOUPE_CACHE_SERVER_PURGE_MISSING", "value" : "true" },
-      { "name" : "CANTALOUPE_PROCESSOR_SELECTION_STRATEGY", "value" : "ManualSelectionStrategy" },
-      { "name" : "CANTALOUPE_MANUAL_PROCESSOR_JP2", "value" : "KakaduNativeProcessor" },
+      { "name" : "CANTALOUPE_ENDPOINT_ADMIN_ENABLED", "value" : "${var.cantaloupe_enable_admin}" },
+      { "name" : "CANTALOUPE_ENDPOINT_ADMIN_SECRET", "value" :  "${var.cantaloupe_admin_secret}" },
+      { "name" : "CANTALOUPE_CACHE_SERVER_DERIVATIVE_ENABLED", "value" : "${var.cantaloupe_enable_cache_server}" },
+      { "name" : "CANTALOUPE_CACHE_SERVER_DERIVATIVE", "value" : "${var.cantaloupe_cache_server_derivative}" },
+      { "name" : "CANTALOUPE_CACHE_SERVER_DERIVATIVE_TTL_SECONDS", "value" : "${var.cantaloupe_cache_server_derivative_ttl}" },
+      { "name" : "CANTALOUPE_CACHE_SERVER_PURGE_MISSING", "value" : "${var.cantaloupe_cache_server_purge_missing}" },
+      { "name" : "CANTALOUPE_PROCESSOR_SELECTION_STRATEGY", "value" : "${var.cantaloupe_processor_selection_strategy}" },
+      { "name" : "CANTALOUPE_MANUAL_PROCESSOR_JP2", "value" : "${var.cantaloupe_manual_processor_jp2}" },
       { "name" : "CANTALOUPE_S3CACHE_ACCESS_KEY_ID", "value" : "${var.s3_cache_access_key}" },
       { "name" : "CANTALOUPE_S3CACHE_SECRET_KEY", "value" : "${var.s3_cache_secret_key}" },
       { "name" : "CANTALOUPE_S3CACHE_ENDPOINT", "value" : "${var.s3_cache_endpoint}" },
@@ -85,8 +85,8 @@ resource "aws_ecs_task_definition" "cantaloupe_definition" {
       { "name" : "CANTALOUPE_S3SOURCE_SECRET_KEY", "value" : "${var.s3_source_secret_key}" },
       { "name" : "CANTALOUPE_S3SOURCE_ENDPOINT", "value" : "${var.s3_source_endpoint}" },
       { "name" : "CANTALOUPE_S3SOURCE_BASICLOOKUPSTRATEGY_BUCKET_NAME", "value" : "${var.s3_source_bucket}" },
-      { "name" : "CANTALOUPE_S3SOURCE_BASICLOOKUPSTRATEGY_PATH_SUFFIX", "value" : ".jpx" },
-      { "name" : "CANTALOUPE_SOURCE_STATIC", "value" : "S3Source" },
+      { "name" : "CANTALOUPE_S3SOURCE_BASICLOOKUPSTRATEGY_PATH_SUFFIX", "value" : "${var.s3_source_basiclookup_suffix}" },
+      { "name" : "CANTALOUPE_SOURCE_STATIC", "value" : "${var.cantaloupe_source_static}" },
       { "name" : "JAVA_HEAP_SIZE", "value" : "${var.cantaloupe_heapsize}" }
     ]
   }
