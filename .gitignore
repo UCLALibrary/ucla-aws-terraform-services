@@ -1,4 +1,5 @@
 .terraform
 .sharecreds
 *.tfstate*
-*.tfvars
+*.secrets
+*.plan
