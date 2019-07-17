@@ -7,9 +7,9 @@ branches:
 jobs:
   include:
     - stage: Run Terraform Validate
-      name: Install Terraform and Validate files
+      name: Install Terraform and validate environments
       language: bash
-      script: .travis/validate-terraform.sh
+      script: "${TRAVIS_BUILD_DIR}.travis/validate-terraform.sh"
 
 notifications:
   email:
