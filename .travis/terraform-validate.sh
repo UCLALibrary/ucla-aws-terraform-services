@@ -18,8 +18,7 @@ rm terraform*.zip
 
 for ENV in "${AWS_ENV[@]}"
 do
-  echo "helloworld"
   cd "${TRAVIS_BUILD_DIR}/environments/${ENV}"
-  ${TERRAFORM} init
+  ${TERRAFORM} init -backend=false
   ${TERRAFORM} validate
 done
