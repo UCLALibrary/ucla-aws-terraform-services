@@ -9,7 +9,7 @@ jobs:
     - stage: Run Terraform Validate
       name: Install Terraform and validate environments
       language: bash
-      script: "${TRAVIS_BUILD_DIR}.travis/validate-terraform.sh"
+      script: .travis/terraform-validate.sh
 
 notifications:
   email:
