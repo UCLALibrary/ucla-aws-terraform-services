@@ -14,24 +14,12 @@ variable "region" {
   default = "us-west-2"
 }
 
-variable "cantaloupe_endpoint_secret" {
-  default = "changethissecret"
-}
-
 variable "vpc_cidr_block" {
   default = "172.20.0.0/16"
 }
 
 variable "subnet_count" {
   default = 2
-}
-
-variable "iiif_app_name" {
-  default = "iiif"
-}
-
-variable "iiif_app_port" {
-  default = 8182
 }
 
 variable "subnet_int" {
@@ -42,17 +30,13 @@ variable "vpc_main_id" {
   default = null
 }
 
-variable "cantaloupe_memory" {
-  default = 2048
-}
-
-variable "cantaloupe_cpu" {
-  default = 1024
-}
-
 variable "alb_main_sg_id" {
   default = null
 }
+
+##########################################
+### Fargate DockerHub Auth             ###
+##########################################
 
 variable "dockerauth_arn" {
   default = "arn:aws:iam::0123456789:policy/dockerauth"
@@ -60,6 +44,29 @@ variable "dockerauth_arn" {
 
 variable "dockerhubauth_credentials_arn" {
   default = "arn:aws:iam::0123456789:policy/dockerauth"
+}
+
+###########################
+### CANTALOUPE SETTINGS ###
+###########################
+variable "cantaloupe_endpoint_secret" {
+  default = "changethissecret"
+}
+
+variable "iiif_app_name" {
+  default = "iiif"
+}
+
+variable "iiif_app_port" {
+  default = 8182
+}
+
+variable "cantaloupe_memory" {
+  default = 2048
+}
+
+variable "cantaloupe_cpu" {
+  default = 1024
 }
 
 variable "registry_url" {
@@ -141,3 +148,52 @@ variable "cantaloupe_manual_processor_jp2" {
 variable "s3_source_basiclookup_suffix" {
   default = ""
 }
+
+variable "cantaloupe_healthcheck_path" {
+  default = "/ping"
+}
+
+##########################################
+### Fargate DockerHub Auth             ###
+##########################################
+
+variable "manifeststore_memory" {
+  default = 2048
+}
+
+variable "manifeststore_cpu" {
+  default = 1024
+}
+
+variable "manifeststore_app_name" {
+  default = "manifeststore"
+}
+
+variable "manifeststore_app_port" {
+  default = "8888"
+}
+
+variable "manifeststore_http_callback" {
+  default = "http://localhost:8888/test-callback"
+}
+
+variable "manifeststore_s3_bucket" {
+  default = "manifeststore"
+}
+
+variable "manifeststore_s3_access_key" {
+  default = "changeme"
+}
+
+variable "manifeststore_s3_secret_key" {
+  default = "changeme"
+}
+
+variable "manifeststore_s3_region" {
+  default = "us-west-2"
+}
+
+variable "manifeststore_healthcheck_path" {
+  default = "/ping"
+}
+
