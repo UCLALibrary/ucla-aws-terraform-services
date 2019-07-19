@@ -23,7 +23,21 @@ resource "aws_lb_target_group" "manifeststore_tg" {
   protocol    = "HTTP"
   vpc_id      = "${var.vpc_main_id}"
   target_type = "ip"
-  port        = 80
+  port        = "${var.app_port}"
+}
+
+resource "aws_lb_listener_rule" "docs" {
+  listener_arn = "${var.http_listener_arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/docs*"]
+  }
 }
 
 resource "aws_ecs_cluster" "manifeststore" {
@@ -82,12 +96,13 @@ resource "aws_ecs_service" "manifeststore" {
   }
 
   load_balancer {
-    target_group_arn = "${aws_lb_target_group.manifeststore_tg.id}"
+    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
     container_name   = "${var.app_name}-manifeststore"
     container_port   = "${var.app_port}"
   }
 
   depends_on = [
+    "aws_lb_listener_rule.docs",
     "aws_ecs_cluster.manifeststore",
     "aws_ecs_task_definition.manifeststore_definition"
   ]

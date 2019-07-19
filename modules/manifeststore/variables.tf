@@ -77,3 +77,8 @@ variable "ecs_execution_role_arn" {
 variable "dockerhubauth_credentials_arn" {
   default = "arn:aws:iam::0123456789:policy/dockerhubauthcredentials"
 }
+
+variable "http_listener_arn" {
+  default = ""
+}
+

@@ -1,8 +1,8 @@
-variable "cantaloupe_target_group_id" {
+variable "cantaloupe_target_group_arn" {
   default = ""
 }
 
-variable "manifeststore_target_group_id" {
+variable "manifeststore_target_group_arn" {
   default = ""
 }
 

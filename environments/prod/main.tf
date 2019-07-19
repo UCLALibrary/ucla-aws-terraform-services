@@ -39,7 +39,7 @@ module "cantaloupe" {
   vpc_subnet_ids                          = "${module.vpc.vpc_subnet_ids}"
   alb_main_id                             = "${module.alb.alb_main_id}"
   alb_main_sg_id                          = "${module.alb.alb_main_sg_id}"
-  app_port                                = "${var.iiif_app_port}"
+  app_port                                = "${var.cantaloupe_app_port}"
   registry_url                            = "${var.cantaloupe_registry_url}"
   app_name                                = "${var.iiif_app_name}"
   cantaloupe_cpu                          = "${var.cantaloupe_cpu}"
@@ -84,11 +84,6 @@ module "manifeststore" {
   manifeststore_s3_region          = "${var.manifeststore_s3_region}"
   ecs_execution_role_arn           = "${module.fargate_iam_policies.ecs_execution_role_arn}"
   dockerhubauth_credentials_arn    = "${var.dockerhubauth_credentials_arn}"
-}
-
-module "load_balancer_mapping" {
-  source                        = "../../modules/load_balancer_mapping"
-  cantaloupe_target_group_id    = "${module.cantaloupe.cantaloupe_target_group_id}"
-  manifeststore_target_group_id = "${module.cantaloupe.cantaloupe_target_group_id}"
+  http_listener_arn                = "${module.cantaloupe.http_listener_arn}"
 }
 

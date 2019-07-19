@@ -1,4 +1,4 @@
-output "cantaloupe_target_group_id" {
-  value = "${aws_lb_target_group.cantaloupe_tg.id}"
+output "http_listener_arn" {
+  value = "${aws_lb_listener.cantaloupe_listener.arn}"
 }
 

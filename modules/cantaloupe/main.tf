@@ -23,7 +23,18 @@ resource "aws_lb_target_group" "cantaloupe_tg" {
   protocol    = "HTTP"
   vpc_id      = "${var.vpc_main_id}"
   target_type = "ip"
-  port        = 80
+  port        = "${var.app_port}"
+}
+
+resource "aws_lb_listener" "cantaloupe_listener" {
+   load_balancer_arn = "${var.alb_main_id}"
+   port              = "80"
+   protocol          = "HTTP"
+
+   default_action {
+     target_group_arn = "${aws_lb_target_group.cantaloupe_tg.arn}"
+     type             = "forward"
+   }
 }
 
 resource "aws_ecs_cluster" "cantaloupe" {
@@ -94,12 +105,13 @@ resource "aws_ecs_service" "cantaloupe" {
   }
 
   load_balancer {
-    target_group_arn = "${aws_lb_target_group.cantaloupe_tg.id}"
+    target_group_arn = "${aws_lb_target_group.cantaloupe_tg.arn}"
     container_name   = "${var.app_name}-cantaloupe"
     container_port   = "${var.app_port}"
   }
 
   depends_on = [
+    "aws_lb_listener.cantaloupe_listener",
     "aws_ecs_cluster.cantaloupe",
     "aws_ecs_task_definition.cantaloupe_definition"
   ]

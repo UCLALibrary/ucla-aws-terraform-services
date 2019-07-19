@@ -4,7 +4,7 @@ resource "aws_lb_listener" "http_listener" {
    protocol          = "HTTP"
 
    default_action {
-     target_group_arn = "${var.cantaloupe_target_group_id}"
+     target_group_arn = "${var.cantaloupe_target_group_arn}"
      type             = "forward"
    }
 }

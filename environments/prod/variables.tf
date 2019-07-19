@@ -57,7 +57,7 @@ variable "iiif_app_name" {
   default = "iiif"
 }
 
-variable "iiif_app_port" {
+variable "cantaloupe_app_port" {
   default = 8182
 }
 
@@ -205,11 +205,7 @@ variable "ecs_execution_role_arn" {
   default = ""
 }
 
-variable "cantaloupe_target_group_id" {
-  default = null
-}
-
-variable "manifeststore_target_group_id" {
-  default = null
+variable "http_listener_arn" {
+  default = ""
 }
 
