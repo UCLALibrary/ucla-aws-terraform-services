@@ -3,5 +3,4 @@ subnet_count        = 2
 subnet_int          = 10
 iiif_app_name       = "iiif-prod"
 iiif_app_port       = "8182"
-manifeststore_app_name = "manifeststore-prod"
 manifeststore_app_port = "8888"

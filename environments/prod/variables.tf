@@ -69,7 +69,7 @@ variable "cantaloupe_cpu" {
   default = 1024
 }
 
-variable "registry_url" {
+variable "cantaloupe_registry_url" {
   default = "registry.hub.docker.com/uclalibrary/cantaloupe-ucla:4.1.1"
 }
 
@@ -165,12 +165,12 @@ variable "manifeststore_cpu" {
   default = 1024
 }
 
-variable "manifeststore_app_name" {
-  default = "manifeststore"
-}
-
 variable "manifeststore_app_port" {
   default = "8888"
+}
+
+variable "manifeststore_registry_url" {
+  default = "registry.hub.docker.com/uclalibrary/manifest-store:latest"
 }
 
 variable "manifeststore_http_callback" {
@@ -195,5 +195,21 @@ variable "manifeststore_s3_region" {
 
 variable "manifeststore_healthcheck_path" {
   default = "/ping"
+}
+
+variable "manifeststore_openspec_path" {
+  default = "manifeststore.yaml"
+}
+
+variable "ecs_execution_role_arn" {
+  default = ""
+}
+
+variable "cantaloupe_target_group_id" {
+  default = null
+}
+
+variable "manifeststore_target_group_id" {
+  default = null
 }
 

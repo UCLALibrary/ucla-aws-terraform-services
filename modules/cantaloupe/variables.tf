@@ -113,10 +113,11 @@ variable "alb_main_sg_id" {
   default = null
 }
 
-variable "dockerauth_arn" {
-  default = "arn:aws:iam::0123456789:policy/dockerhubauth"
+variable "ecs_execution_role_arn" {
+  default = ""
 }
 
 variable "dockerhubauth_credentials_arn" {
   default = "arn:aws:iam::0123456789:policy/dockerhubauthcredentials"
 }
+
