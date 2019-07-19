@@ -25,6 +25,11 @@ module "alb" {
   app_name       = "${var.iiif_app_name}"
   vpc_main_id    = "${module.vpc.vpc_main_id}"
   vpc_subnet_ids = "${module.vpc.vpc_subnet_ids}"
+
+### Not available yet ###
+#  depends_on = [
+#  "vpc"
+#  ]
 }
 
 module "fargate_iam_policies" {
@@ -65,6 +70,13 @@ module "cantaloupe" {
   s3_source_secret_key                    = "${var.s3_source_secret_key}"
   s3_source_bucket                        = "${var.s3_source_bucket}"
   s3_source_endpoint                      = "${var.s3_source_endpoint}"
+
+### Not available yet ###
+#  depends_on = [
+#  "module.vpc",
+#  "module.alb",
+#  "module.fargate_iam_policies"
+#  ]
 }
 
 module "manifeststore" {
@@ -85,5 +97,13 @@ module "manifeststore" {
   ecs_execution_role_arn           = "${module.fargate_iam_policies.ecs_execution_role_arn}"
   dockerhubauth_credentials_arn    = "${var.dockerhubauth_credentials_arn}"
   http_listener_arn                = "${module.cantaloupe.http_listener_arn}"
+
+### Not available yet ###
+#  depends_on = [
+#  "module.vpc",
+#  "module.alb",
+#  "module.fargate_iam_policies",
+#  "module.cantaloupe"
+#  ]
 }
 

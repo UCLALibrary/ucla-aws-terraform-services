@@ -24,6 +24,16 @@ resource "aws_lb_target_group" "manifeststore_tg" {
   vpc_id      = "${var.vpc_main_id}"
   target_type = "ip"
   port        = "${var.app_port}"
+
+  health_check {
+    path = "${var.manifeststore_healthcheck_path}"
+    port = "${var.app_port}"
+    healthy_threshold = 5
+    unhealthy_threshold = 2
+    timeout = 5
+    interval = 15
+    matcher = "200,202,404"
+  }
 }
 
 resource "aws_lb_listener_rule" "docs" {
@@ -36,7 +46,7 @@ resource "aws_lb_listener_rule" "docs" {
 
   condition {
     field  = "path-pattern"
-    values = ["/docs*"]
+    values = ["/docs/*"]
   }
 }
 
