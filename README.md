@@ -1,6 +1,2 @@
-# UCLA Library Terraform Files - Services Team
+# UCLA Library Terraform Files - Services Team [![Build Status](https://travis-ci.com/UCLALibrary/ucla-aws-terraform-services.svg?branch=master)](https://travis-ci.com/UCLALibrary/ucla-aws-terraform-services)
 This repository contains terraform configuration files that is used to provision the Services environment.
-
-Use at your own risk-- Jenkins will be managing the pipeline for the production environment
-
-Please store your sensitive data in Hashicorp Vault.

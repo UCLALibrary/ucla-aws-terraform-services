@@ -1,0 +1,19 @@
+# We want all PRs built but only merges on master branch and tags under semantic version scheme
+branches:
+  only:
+  - master
+  - /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/
+
+jobs:
+  include:
+    - stage: Run Terraform Validate
+      name: Install Terraform and validate environments
+      language: bash
+      script: .travis/terraform-validate.sh
+
+notifications:
+  email:
+    recipients:
+      - avuong@cachemeoutside.io
+    on_success: change
+    on_failure: change
