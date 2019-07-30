@@ -27,7 +27,8 @@ ${TERRAFORM} init \
 
 if [[ -f "${LOCAL_SECRETS}" ]];
 then
-  ${TERRAFORM} destroy -var-file="${WORKSPACE}.tfvars" -var-file="${LOCAL_SECRETS}" 
+  ${TERRAFORM} destroy -var-file="${LOCAL_SECRETS}" 
 else
-  ${TERRAFORM} destroy ${PLAN_FILE} -var-file="${WORKSPACE}.tfvars" 
+  ${TERRAFORM} destroy ${PLAN_FILE}
 fi
+

@@ -27,7 +27,8 @@ ${TERRAFORM} init \
 
 if [[ -f "${LOCAL_SECRETS}" ]];
 then
-  ${TERRAFORM} plan -out ${PLAN_FILE} -var-file="${WORKSPACE}.tfvars" -var-file="${LOCAL_SECRETS}" 
+  ${TERRAFORM} plan -out ${PLAN_FILE} -var-file="${LOCAL_SECRETS}" 
 else
-  ${TERRAFORM} plan -out ${PLAN_FILE} -var-file="${WORKSPACE}.tfvars" 
+  ${TERRAFORM} plan -out ${PLAN_FILE}
 fi
+
