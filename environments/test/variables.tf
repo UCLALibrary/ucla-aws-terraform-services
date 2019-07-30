@@ -14,24 +14,12 @@ variable "region" {
   default = "us-west-2"
 }
 
-variable "cantaloupe_endpoint_secret" {
-  default = "changethissecret"
-}
-
 variable "vpc_cidr_block" {
   default = "172.20.0.0/16"
 }
 
 variable "subnet_count" {
   default = 2
-}
-
-variable "iiif_app_name" {
-  default = "iiif"
-}
-
-variable "iiif_app_port" {
-  default = 8182
 }
 
 variable "subnet_int" {
@@ -42,17 +30,13 @@ variable "vpc_main_id" {
   default = null
 }
 
-variable "cantaloupe_memory" {
-  default = 2048
-}
-
-variable "cantaloupe_cpu" {
-  default = 1024
-}
-
 variable "alb_main_sg_id" {
   default = null
 }
+
+##########################################
+### Fargate DockerHub Auth             ###
+##########################################
 
 variable "dockerauth_arn" {
   default = "arn:aws:iam::0123456789:policy/dockerauth"
@@ -62,7 +46,30 @@ variable "dockerhubauth_credentials_arn" {
   default = "arn:aws:iam::0123456789:policy/dockerauth"
 }
 
-variable "registry_url" {
+###########################
+### CANTALOUPE SETTINGS ###
+###########################
+variable "cantaloupe_endpoint_secret" {
+  default = "changethissecret"
+}
+
+variable "iiif_app_name" {
+  default = "iiif"
+}
+
+variable "cantaloupe_app_port" {
+  default = 8182
+}
+
+variable "cantaloupe_memory" {
+  default = 2048
+}
+
+variable "cantaloupe_cpu" {
+  default = 1024
+}
+
+variable "cantaloupe_registry_url" {
   default = "registry.hub.docker.com/uclalibrary/cantaloupe-ucla:4.1.1"
 }
 
@@ -141,3 +148,97 @@ variable "cantaloupe_manual_processor_jp2" {
 variable "s3_source_basiclookup_suffix" {
   default = ""
 }
+
+variable "cantaloupe_healthcheck_path" {
+  default = "/ping"
+}
+
+##########################################
+### Fargate DockerHub Auth             ###
+##########################################
+
+variable "manifeststore_memory" {
+  default = 2048
+}
+
+variable "manifeststore_cpu" {
+  default = 1024
+}
+
+variable "manifeststore_app_port" {
+  default = "8888"
+}
+
+variable "manifeststore_registry_url" {
+  default = "registry.hub.docker.com/uclalibrary/manifest-store:latest"
+}
+
+variable "manifeststore_http_callback" {
+  default = "http://localhost:8888/test-callback"
+}
+
+variable "manifeststore_s3_bucket" {
+  default = "manifeststore"
+}
+
+variable "manifeststore_s3_access_key" {
+  default = "changeme"
+}
+
+variable "manifeststore_s3_secret_key" {
+  default = "changeme"
+}
+
+variable "manifeststore_s3_region" {
+  default = "us-west-2"
+}
+
+variable "manifeststore_healthcheck_path" {
+  default = "/ping"
+}
+
+variable "manifeststore_openspec_path" {
+  default = "manifeststore.yaml"
+}
+
+variable "ecs_execution_role_arn" {
+  default = ""
+}
+
+variable "http_listener_arn" {
+  default = ""
+}
+
+## KakaduConverter Variables
+variable kakadu_converter_s3_tiff_bucket {}
+variable kakadu_converter_s3_tiff_bucket_region {
+  default = "us-west-2"
+}
+
+variable kakadu_converter_artifact {}
+variable kakadu_converter_app_name {}
+variable kakadu_converter_layers {}
+variable kakadu_converter_handler {}
+variable kakadu_converter_filter_suffix {}
+variable kakadu_converter_runtime {}
+variable kakadu_converter_memory_size {
+  default = "1024"
+}
+
+variable kakadu_converter_timeout {
+  default = "600"
+}
+
+variable kakadu_converter_environment_variables {
+  type = "map"
+  default = {
+    hello = "world",
+    hello2 = "world2"
+  }
+}
+
+variable kakadu_converter_cloudwatch_permissions {}
+variable kakadu_converter_s3_permissions {}
+variable kakadu_converter_s3_buckets {}
+variable kakadu_converter_bucket_event {} 
+

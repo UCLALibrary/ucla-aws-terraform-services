@@ -1,0 +1,9 @@
+### Workspaces is optional ###
+# Documentation found here: https://www.terraform.io/docs/backends/types/remote.html
+workspaces {
+  prefix = "app-"
+}
+
+hostname = "app.terraform.io"
+organization = "org"
+token = "token"

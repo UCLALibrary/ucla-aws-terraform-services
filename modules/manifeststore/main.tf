@@ -32,7 +32,7 @@ resource "aws_lb_target_group" "manifeststore_tg" {
     unhealthy_threshold = 2
     timeout = 5
     interval = 15
-    matcher = "200,202,404"
+    matcher = "200"
   }
 }
 
@@ -46,7 +46,35 @@ resource "aws_lb_listener_rule" "docs" {
 
   condition {
     field  = "path-pattern"
-    values = ["/docs/*"]
+    values = ["/docs/manifest-store*"]
+  }
+}
+
+resource "aws_lb_listener_rule" "collection" {
+  listener_arn = "${var.http_listener_arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/collection/*"]
+  }
+}
+
+resource "aws_lb_listener_rule" "manifest" {
+  listener_arn = "${var.http_listener_arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/*/manifest"]
   }
 }
 
