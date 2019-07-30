@@ -5,7 +5,7 @@ TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/ter
 TERRAFORM_BIN="${HOME}/terraform/bin"
 TERRAFORM="${TERRAFORM_BIN}/terraform"
 
-AWS_ENV=("travistest")
+AWS_ENV=("test", "prod")
 
 mkdir -p ${TERRAFORM_BIN}
 cd ${TERRAFORM_BIN}
