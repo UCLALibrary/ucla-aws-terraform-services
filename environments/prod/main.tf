@@ -103,13 +103,13 @@ module "manifeststore" {
 }
 
 module "kakadu_converter_s3_tiff" {
-  source        = "https://github.com/UCLALibrary/aws_terraform_s3_module.git"
+  source        = "git::https://github.com/UCLALibrary/aws_terraform_s3_module.git"
   bucket_name   = "${var.kakadu_converter_s3_tiff_bucket}"
   bucket_region = "${var.kakadu_converter_s3_tiff_bucket_region}"
 }
 
 module "kakadu_converter_lambda_tiff" {
-  source = "https://github.com/UCLALibrary/aws_terraform_lambda_module.git"
+  source = "git::https://github.com/UCLALibrary/aws_terraform_lambda_module.git"
 
   ## KakaduConverter lambda role setup
   cloudwatch_iam_allowed_actions = "${var.kakadu_converter_cloudwatch_permissions}"

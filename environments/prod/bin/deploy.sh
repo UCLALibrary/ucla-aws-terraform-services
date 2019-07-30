@@ -12,6 +12,8 @@ then
   exit
 fi
 
+${TERRAFORM} init \
+  -backend-config="${BACKEND_FILE}"
 
 if [[ -z $(${TERRAFORM} workspace list | grep -i ${WORKSPACE}) ]];
 then
@@ -21,9 +23,6 @@ else
 fi
 
 echo "Working in workspace: $(${TERRAFORM} workspace show)"
-
-${TERRAFORM} init \
-  -backend-config="${BACKEND_FILE}"
 
 if [[ -f "${LOCAL_SECRETS}" ]];
 then

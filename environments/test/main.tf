@@ -1,10 +1,5 @@
 terraform {
-  backend "s3" {
-    bucket = "softwaredev-services-terraform"
-    key    = "test-cantaloupe/terraform.tfstate"
-    region = "us-west-2"
-    profile = "services"
-  }
+  backend "remote" {}
 }
 
 provider "aws" {
@@ -21,25 +16,36 @@ module "vpc" {
 }
 
 module "alb" {
-  source   = "../../modules/alb"
-  app_name = "${var.iiif_app_name}"
-  vpc_main_id = "${module.vpc.vpc_main_id}"
+  source         = "../../modules/alb"
+  app_name       = "${var.iiif_app_name}"
+  vpc_main_id    = "${module.vpc.vpc_main_id}"
   vpc_subnet_ids = "${module.vpc.vpc_subnet_ids}"
+
+### Not available yet ###
+#  depends_on = [
+#  "vpc"
+#  ]
+}
+
+module "fargate_iam_policies" {
+  source         = "../../modules/fargate_iam_policies"
+  dockerauth_arn = "${var.dockerauth_arn}"
+  app_name       = "${var.iiif_app_name}"
 }
 
 module "cantaloupe" {
-  source                        = "../../modules/cantaloupe"
-  vpc_main_id                   = "${module.vpc.vpc_main_id}"
-  vpc_subnet_ids                = "${module.vpc.vpc_subnet_ids}"
-  alb_main_id                   = "${module.alb.alb_main_id}"
-  alb_main_sg_id                = "${module.alb.alb_main_sg_id}"
-  app_port                      = "${var.iiif_app_port}"
-  registry_url                  = "${var.registry_url}"
-  app_name                      = "${var.iiif_app_name}"
-  cantaloupe_cpu                = "${var.cantaloupe_cpu}"
-  cantaloupe_memory             = "${var.cantaloupe_memory}"
-  dockerauth_arn                = "${var.dockerauth_arn}"
-  dockerhubauth_credentials_arn = "${var.dockerhubauth_credentials_arn}"
+  source                                  = "../../modules/cantaloupe"
+  vpc_main_id                             = "${module.vpc.vpc_main_id}"
+  vpc_subnet_ids                          = "${module.vpc.vpc_subnet_ids}"
+  alb_main_id                             = "${module.alb.alb_main_id}"
+  alb_main_sg_id                          = "${module.alb.alb_main_sg_id}"
+  app_port                                = "${var.cantaloupe_app_port}"
+  registry_url                            = "${var.cantaloupe_registry_url}"
+  app_name                                = "${var.iiif_app_name}"
+  cantaloupe_cpu                          = "${var.cantaloupe_cpu}"
+  cantaloupe_memory                       = "${var.cantaloupe_memory}"
+  ecs_execution_role_arn                  = "${module.fargate_iam_policies.ecs_execution_role_arn}"
+  dockerhubauth_credentials_arn           = "${var.dockerhubauth_credentials_arn}"
   cantaloupe_processor_selection_strategy = "${var.cantaloupe_processor_selection_strategy}"
   cantaloupe_manual_processor_jp2         = "${var.cantaloupe_manual_processor_jp2}"
   cantaloupe_enable_admin                 = "${var.cantaloupe_enable_admin}"
@@ -54,9 +60,76 @@ module "cantaloupe" {
   s3_cache_secret_key                     = "${var.s3_cache_secret_key}"
   s3_cache_bucket                         = "${var.s3_cache_bucket}"
   s3_cache_endpoint                       = "${var.s3_cache_endpoint}"
-  cantaloupe_source_static      = "${var.cantaloupe_source_static}"
-  s3_source_access_key          = "${var.s3_source_access_key}"
-  s3_source_secret_key          = "${var.s3_source_secret_key}"
-  s3_source_bucket              = "${var.s3_source_bucket}"
-  s3_source_endpoint            = "${var.s3_source_endpoint}"
+  cantaloupe_source_static                = "${var.cantaloupe_source_static}"
+  s3_source_access_key                    = "${var.s3_source_access_key}"
+  s3_source_secret_key                    = "${var.s3_source_secret_key}"
+  s3_source_bucket                        = "${var.s3_source_bucket}"
+  s3_source_endpoint                      = "${var.s3_source_endpoint}"
+
+### Not available yet ###
+#  depends_on = [
+#  "module.vpc",
+#  "module.alb",
+#  "module.fargate_iam_policies"
+#  ]
 }
+
+module "manifeststore" {
+  source                           = "../../modules/manifeststore"
+  vpc_main_id                      = "${module.vpc.vpc_main_id}"
+  vpc_subnet_ids                   = "${module.vpc.vpc_subnet_ids}"
+  alb_main_id                      = "${module.alb.alb_main_id}"
+  alb_main_sg_id                   = "${module.alb.alb_main_sg_id}"
+  app_port                         = "${var.manifeststore_app_port}"
+  registry_url                     = "${var.manifeststore_registry_url}"
+  app_name                         = "${var.iiif_app_name}"
+  manifeststore_cpu                = "${var.manifeststore_cpu}"
+  manifeststore_memory             = "${var.manifeststore_memory}"
+  manifeststore_s3_bucket          = "${var.manifeststore_s3_bucket}"
+  manifeststore_s3_access_key      = "${var.manifeststore_s3_access_key}"
+  manifeststore_s3_secret_key      = "${var.manifeststore_s3_secret_key}"
+  manifeststore_s3_region          = "${var.manifeststore_s3_region}"
+  ecs_execution_role_arn           = "${module.fargate_iam_policies.ecs_execution_role_arn}"
+  dockerhubauth_credentials_arn    = "${var.dockerhubauth_credentials_arn}"
+  http_listener_arn                = "${module.cantaloupe.http_listener_arn}"
+
+### Not available yet ###
+#  depends_on = [
+#  "module.vpc",
+#  "module.alb",
+#  "module.fargate_iam_policies",
+#  "module.cantaloupe"
+#  ]
+}
+
+module "kakadu_converter_s3_tiff" {
+  source        = "git::https://github.com/UCLALibrary/aws_terraform_s3_module.git"
+  bucket_name   = "${var.kakadu_converter_s3_tiff_bucket}"
+  bucket_region = "${var.kakadu_converter_s3_tiff_bucket_region}"
+}
+
+module "kakadu_converter_lambda_tiff" {
+  source = "git::https://github.com/UCLALibrary/aws_terraform_lambda_module.git"
+
+  ## KakaduConverter lambda role setup
+  cloudwatch_iam_allowed_actions = "${var.kakadu_converter_cloudwatch_permissions}"
+  s3_iam_allowed_actions         = "${var.kakadu_converter_s3_permissions}"
+  s3_iam_allowed_resources       = "${var.kakadu_converter_s3_buckets}"
+
+  ## KakaduConverter lambda function specification
+  app_artifact      = "${var.kakadu_converter_artifact}"
+  app_name          = "${var.kakadu_converter_app_name}"
+  app_layers        = "${var.kakadu_converter_layers}"
+  app_handler       = "${var.kakadu_converter_handler}"
+  app_filter_suffix = "${var.kakadu_converter_filter_suffix}"
+  app_runtime       = "${var.kakadu_converter_runtime}"
+  app_memory_size   = "${var.kakadu_converter_memory_size}"
+  app_timeout       = "${var.kakadu_converter_timeout}"
+  app_environment_variables = "${var.kakadu_converter_environment_variables}"
+
+  ## KakaduConverter S3 bucket notification settings
+  bucket_event = "${var.kakadu_converter_bucket_event}"
+  trigger_s3_bucket_id = "${module.kakadu_converter_s3_tiff.bucket_id}"
+  trigger_s3_bucket_arn = "${module.kakadu_converter_s3_tiff.bucket_arn}"
+}
+
