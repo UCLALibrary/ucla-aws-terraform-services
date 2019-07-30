@@ -109,7 +109,8 @@ module "kakadu_converter_s3_tiff" {
 }
 
 module "kakadu_converter_lambda_tiff" {
-  source = "git::https://github.com/UCLALibrary/aws_terraform_lambda_module.git/?ref=IIIF-309"
+#  source = "git::https://github.com/UCLALibrary/aws_terraform_lambda_module.git/?ref=IIIF-309"
+  source = "/Users/avuong/github-repos/aws_terraform_lambda_module"
 
   ## KakaduConverter lambda role setup
   cloudwatch_iam_allowed_actions = "${var.kakadu_converter_cloudwatch_permissions}"
