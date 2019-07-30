@@ -103,7 +103,8 @@ module "manifeststore" {
 }
 
 module "kakadu_converter_s3_tiff" {
-  source        = "github.com/UCLALibrary/aws_terraform_s3_module.git"
+#  source        = "github.com/UCLALibrary/aws_terraform_s3_module.git"
+  source = "/Users/avuong/github-repos/aws_terraform_s3_module"
   bucket_name   = "${var.kakadu_converter_s3_tiff_bucket}"
   bucket_region = "${var.kakadu_converter_s3_tiff_bucket_region}"
 }
@@ -130,6 +131,7 @@ module "kakadu_converter_lambda_tiff" {
 
   ## KakaduConverter S3 bucket notification settings
   bucket_event = "${var.kakadu_converter_bucket_event}"
+  trigger_s3_bucket_id = "${module.kakadu_converter_s3_tiff.bucket_id}"
   trigger_s3_bucket_arn = "${module.kakadu_converter_s3_tiff.bucket_arn}"
 }
 
