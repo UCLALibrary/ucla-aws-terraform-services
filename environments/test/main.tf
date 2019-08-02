@@ -135,7 +135,7 @@ module "kakadu_converter_lambda_tiff" {
 }
 
 module "iiif_cloudfront" {
-  source                  = "git::https://github.com/UCLALibrary/aws_terraform_cloudfront_module.git?ref=IIIF-325"
+  source                  = "git::https://github.com/UCLALibrary/aws_terraform_cloudfront_module.git"
   app_origin_dns_name     = "${var.iiif_alb_dns_name}"
   app_public_dns_names    = "${var.iiif_public_dns_names}"
   app_origin_id           = "ALBOrigin-${var.iiif_alb_dns_name}"
