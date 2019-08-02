@@ -57,6 +57,8 @@ variable "iiif_app_name" {
   default = "iiif"
 }
 
+variable "iiif_app_ssl_cert_arn" {}
+
 variable "cantaloupe_app_port" {
   default = 8182
 }
@@ -242,3 +244,8 @@ variable kakadu_converter_s3_permissions {}
 variable kakadu_converter_s3_buckets {}
 variable kakadu_converter_bucket_event {} 
 
+variable iiif_alb_dns_name {}
+variable iiif_public_dns_names {}
+variable iiif_thumbnail_path_pattern {}
+variable iiif_cloudfront_ssl_certificate_arn {}
+variable iiif_cloudfront_price_class {}

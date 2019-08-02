@@ -6,6 +6,8 @@ variable "app_port" {
   default = 8182
 }
 
+variable app_ssl_certificate_arn {}
+
 variable "vpc_main_id" {
   default = null
 }
