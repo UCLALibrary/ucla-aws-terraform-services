@@ -42,6 +42,7 @@ module "cantaloupe" {
   app_port                                = "${var.cantaloupe_app_port}"
   registry_url                            = "${var.cantaloupe_registry_url}"
   app_name                                = "${var.iiif_app_name}"
+  app_ssl_certificate_arn                 = "${var.iiif_app_ssl_cert_arn}"
   cantaloupe_cpu                          = "${var.cantaloupe_cpu}"
   cantaloupe_memory                       = "${var.cantaloupe_memory}"
   ecs_execution_role_arn                  = "${module.fargate_iam_policies.ecs_execution_role_arn}"
@@ -91,7 +92,7 @@ module "manifeststore" {
   manifeststore_s3_region          = "${var.manifeststore_s3_region}"
   ecs_execution_role_arn           = "${module.fargate_iam_policies.ecs_execution_role_arn}"
   dockerhubauth_credentials_arn    = "${var.dockerhubauth_credentials_arn}"
-  http_listener_arn                = "${module.cantaloupe.http_listener_arn}"
+  http_listener_arn                = "${module.cantaloupe.https_listener_arn}"
 
 ### Not available yet ###
 #  depends_on = [
@@ -131,5 +132,15 @@ module "kakadu_converter_lambda_tiff" {
   bucket_event = "${var.kakadu_converter_bucket_event}"
   trigger_s3_bucket_id = "${module.kakadu_converter_s3_tiff.bucket_id}"
   trigger_s3_bucket_arn = "${module.kakadu_converter_s3_tiff.bucket_arn}"
+}
+
+module "iiif_cloudfront" {
+  source                  = "git::https://github.com/UCLALibrary/aws_terraform_cloudfront_module.git?ref=IIIF-325"
+  app_origin_dns_name     = "${var.iiif_alb_dns_name}"
+  app_public_dns_names    = "${var.iiif_public_dns_names}"
+  app_origin_id           = "ALBOrigin-${var.iiif_alb_dns_name}"
+  app_ssl_certificate_arn = "${var.iiif_cloudfront_ssl_certificate_arn}"
+  app_path_pattern        = "${var.iiif_thumbnail_path_pattern}"
+  app_price_class         = "${var.iiif_cloudfront_price_class}"
 }
 
