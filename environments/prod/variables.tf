@@ -246,6 +246,7 @@ variable kakadu_converter_bucket_event {}
 
 variable iiif_alb_dns_name {}
 variable iiif_public_dns_names {}
-variable iiif_thumbnail_path_pattern {}
+variable iiif_jpg_path_pattern { default = "*.jpg" }
+variable iiif_jpg_default_ttl { default = 0 }
 variable iiif_cloudfront_ssl_certificate_arn {}
 variable iiif_cloudfront_price_class {}
