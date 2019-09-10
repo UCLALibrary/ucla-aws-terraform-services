@@ -103,13 +103,19 @@ module "manifeststore" {
 #  ]
 }
 
-module "kakadu_converter_s3_tiff" {
+module "test01_kakadu_converter_s3_tiff" {
   source        = "git::https://github.com/UCLALibrary/aws_terraform_s3_module.git"
-  bucket_name   = "${var.kakadu_converter_s3_tiff_bucket}"
-  bucket_region = "${var.kakadu_converter_s3_tiff_bucket_region}"
+  bucket_name   = "${var.test01_kakadu_converter_s3_tiff_bucket}"
+  bucket_region = "${var.test01_kakadu_converter_s3_tiff_bucket_region}"
 }
 
-module "kakadu_converter_lambda_tiff" {
+module "test02_kakadu_converter_s3_tiff" {
+  source        = "git::https://github.com/UCLALibrary/aws_terraform_s3_module.git"
+  bucket_name   = "${var.test02_kakadu_converter_s3_tiff_bucket}"
+  bucket_region = "${var.test02_kakadu_converter_s3_tiff_bucket_region}"
+}
+
+module "test01_kakadu_converter_lambda_tiff" {
   source = "git::https://github.com/UCLALibrary/aws_terraform_lambda_module.git"
 
   ## KakaduConverter lambda role setup
@@ -119,19 +125,44 @@ module "kakadu_converter_lambda_tiff" {
 
   ## KakaduConverter lambda function specification
   app_artifact      = "${var.kakadu_converter_artifact}"
-  app_name          = "${var.kakadu_converter_app_name}"
+  app_name          = "${var.test01_lambda_name}"
   app_layers        = "${var.kakadu_converter_layers}"
   app_handler       = "${var.kakadu_converter_handler}"
   app_filter_suffix = "${var.kakadu_converter_filter_suffix}"
   app_runtime       = "${var.kakadu_converter_runtime}"
   app_memory_size   = "${var.kakadu_converter_memory_size}"
   app_timeout       = "${var.kakadu_converter_timeout}"
-  app_environment_variables = "${var.kakadu_converter_environment_variables}"
+  app_environment_variables = "${var.test01_kakadu_converter_environment_variables}"
 
   ## KakaduConverter S3 bucket notification settings
   bucket_event = "${var.kakadu_converter_bucket_event}"
-  trigger_s3_bucket_id = "${module.kakadu_converter_s3_tiff.bucket_id}"
-  trigger_s3_bucket_arn = "${module.kakadu_converter_s3_tiff.bucket_arn}"
+  trigger_s3_bucket_id = "${module.test01_kakadu_converter_s3_tiff.bucket_id}"
+  trigger_s3_bucket_arn = "${module.test01_kakadu_converter_s3_tiff.bucket_arn}"
+}
+
+module "test02_kakadu_converter_lambda_tiff" {
+  source = "git::https://github.com/UCLALibrary/aws_terraform_lambda_module.git"
+
+  ## KakaduConverter lambda role setup
+  cloudwatch_iam_allowed_actions = "${var.kakadu_converter_cloudwatch_permissions}"
+  s3_iam_allowed_actions         = "${var.kakadu_converter_s3_permissions}"
+  s3_iam_allowed_resources       = "${var.kakadu_converter_s3_buckets}"
+
+  ## KakaduConverter lambda function specification
+  app_artifact      = "${var.kakadu_converter_artifact}"
+  app_name          = "${var.test02_lambda_name}"
+  app_layers        = "${var.kakadu_converter_layers}"
+  app_handler       = "${var.kakadu_converter_handler}"
+  app_filter_suffix = "${var.kakadu_converter_filter_suffix}"
+  app_runtime       = "${var.kakadu_converter_runtime}"
+  app_memory_size   = "${var.kakadu_converter_memory_size}"
+  app_timeout       = "${var.kakadu_converter_timeout}"
+  app_environment_variables = "${var.test02_kakadu_converter_environment_variables}"
+
+  ## KakaduConverter S3 bucket notification settings
+  bucket_event = "${var.kakadu_converter_bucket_event}"
+  trigger_s3_bucket_id = "${module.test02_kakadu_converter_s3_tiff.bucket_id}"
+  trigger_s3_bucket_arn = "${module.test02_kakadu_converter_s3_tiff.bucket_arn}"
 }
 
 module "iiif_cloudfront" {
@@ -140,7 +171,7 @@ module "iiif_cloudfront" {
   app_public_dns_names    = "${var.iiif_public_dns_names}"
   app_origin_id           = "ALBOrigin-${var.iiif_alb_dns_name}"
   app_ssl_certificate_arn = "${var.iiif_cloudfront_ssl_certificate_arn}"
-  app_path_pattern        = "${var.iiif_thumbnail_path_pattern}"
+  app_path_pattern        = "${var.iiif_jpg_path_pattern}"
   app_price_class         = "${var.iiif_cloudfront_price_class}"
 }
 
