@@ -212,8 +212,15 @@ variable "http_listener_arn" {
 }
 
 ## KakaduConverter Variables
-variable kakadu_converter_s3_tiff_bucket {}
-variable kakadu_converter_s3_tiff_bucket_region {
+variable prod01_lambda_name {}
+variable prod01_kakadu_converter_s3_tiff_bucket {}
+variable prod01_kakadu_converter_s3_tiff_bucket_region {
+  default = "us-west-2"
+}
+
+variable prod02_lambda_name {}
+variable prod02_kakadu_converter_s3_tiff_bucket {}
+variable prod02_kakadu_converter_s3_tiff_bucket_region {
   default = "us-west-2"
 }
 
@@ -231,13 +238,22 @@ variable kakadu_converter_timeout {
   default = "600"
 }
 
-variable kakadu_converter_environment_variables {
+variable prod01_kakadu_converter_environment_variables {
   type = "map"
   default = {
     hello = "world",
     hello2 = "world2"
   }
 }
+
+variable prod02_kakadu_converter_environment_variables {
+  type = "map"
+  default = {
+    hello = "world",
+    hello2 = "world2"
+  }
+}
+
 
 variable kakadu_converter_cloudwatch_permissions {}
 variable kakadu_converter_s3_permissions {}
@@ -246,6 +262,9 @@ variable kakadu_converter_bucket_event {}
 
 variable iiif_alb_dns_name {}
 variable iiif_public_dns_names {}
-variable iiif_thumbnail_path_pattern {}
+variable iiif_jpg_path_pattern {}
 variable iiif_cloudfront_ssl_certificate_arn {}
 variable iiif_cloudfront_price_class {}
+variable iiif_jpg_default_ttl {}
+variable iiif_jpg_max_ttl {}
+
