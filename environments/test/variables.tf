@@ -18,13 +18,15 @@ variable "vpc_cidr_block" {
   default = "172.20.0.0/16"
 }
 
-variable "subnet_count" {
-  default = 2
-}
-
-variable "subnet_int" {
-  default = 30
-}
+variable "public_subnet_count" {}
+variable "public_subnet_int" {}     
+variable "private_subnet_count" {}
+variable "private_subnet_int" {}
+variable "vpc_endpoint" {}              
+variable "create_vpc_endpoint" {}          
+variable "enable_nat" {}
+variable "associate_existing_nat" {}
+variable "existing_private_nat_gateway_id" {}
 
 variable "vpc_main_id" {
   default = null
@@ -246,6 +248,9 @@ variable kakadu_converter_bucket_event {}
 
 variable iiif_alb_dns_name {}
 variable iiif_public_dns_names {}
-variable iiif_thumbnail_path_pattern {}
+variable iiif_jpg_path_pattern {}
 variable iiif_cloudfront_ssl_certificate_arn {}
 variable iiif_cloudfront_price_class {}
+variable iiif_jpg_default_ttl {}
+variable iiif_jpg_max_ttl {}
+
