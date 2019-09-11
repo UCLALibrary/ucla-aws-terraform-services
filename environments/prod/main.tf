@@ -9,22 +9,34 @@ provider "aws" {
 }
 
 module "vpc" {
-  source            = "../../modules/vpc"
-  vpc_cidr_block    = "${var.vpc_cidr_block}"
-  subnet_count      = "${var.subnet_count}"
-  subnet_int        = "${var.subnet_int}"
+  source                    = "git::https://github.com/UCLALibrary/aws_terraform_module_vpc.git"
+  vpc_cidr_block            = "${var.vpc_cidr_block}"
+  public_subnet_count       = "${var.public_subnet_count}"
+  public_subnet_init_value  = "${var.public_subnet_int}"
+  private_subnet_count      = "${var.private_subnet_count}"
+  private_subnet_init_value = "${var.private_subnet_int}"
+  vpc_endpoint              = "${var.vpc_endpoint}"
+  create_vpc_endpoint       = "${var.create_vpc_endpoint}"
+  enable_nat                = "${var.enable_nat}"
+}
+
+module "sg_egress" {
+  source           = "git::https://github.com/UCLALibrary/aws_terraform_module_security_group.git"
+  sg_name          = "iiif-egress_allowed"
+  sg_description   = "iiif-global-egress-rule"
+  vpc_id           = "${module.vpc.vpc_main_id}"
+  ingress_ports    = []
+  ingress_allowed  = null
+  sg_groups        = null
 }
 
 module "alb" {
   source         = "../../modules/alb"
   app_name       = "${var.iiif_app_name}"
   vpc_main_id    = "${module.vpc.vpc_main_id}"
-  vpc_subnet_ids = "${module.vpc.vpc_subnet_ids}"
 
-### Not available yet ###
-#  depends_on = [
-#  "vpc"
-#  ]
+  ### NATS can get expensive for public facing traffic
+  vpc_subnet_ids = "${module.vpc.vpc_public_subnet_ids}"
 }
 
 module "fargate_iam_policies" {
@@ -36,7 +48,7 @@ module "fargate_iam_policies" {
 module "cantaloupe" {
   source                                  = "../../modules/cantaloupe"
   vpc_main_id                             = "${module.vpc.vpc_main_id}"
-  vpc_subnet_ids                          = "${module.vpc.vpc_subnet_ids}"
+  vpc_subnet_ids                          = "${module.vpc.vpc_public_subnet_ids}"
   alb_main_id                             = "${module.alb.alb_main_id}"
   alb_main_sg_id                          = "${module.alb.alb_main_sg_id}"
   app_port                                = "${var.cantaloupe_app_port}"
@@ -66,19 +78,12 @@ module "cantaloupe" {
   s3_source_secret_key                    = "${var.s3_source_secret_key}"
   s3_source_bucket                        = "${var.s3_source_bucket}"
   s3_source_endpoint                      = "${var.s3_source_endpoint}"
-
-### Not available yet ###
-#  depends_on = [
-#  "module.vpc",
-#  "module.alb",
-#  "module.fargate_iam_policies"
-#  ]
 }
 
 module "manifeststore" {
   source                           = "../../modules/manifeststore"
   vpc_main_id                      = "${module.vpc.vpc_main_id}"
-  vpc_subnet_ids                   = "${module.vpc.vpc_subnet_ids}"
+  vpc_subnet_ids                   = "${module.vpc.vpc_public_subnet_ids}"
   alb_main_id                      = "${module.alb.alb_main_id}"
   alb_main_sg_id                   = "${module.alb.alb_main_sg_id}"
   app_port                         = "${var.manifeststore_app_port}"
@@ -93,14 +98,6 @@ module "manifeststore" {
   ecs_execution_role_arn           = "${module.fargate_iam_policies.ecs_execution_role_arn}"
   dockerhubauth_credentials_arn    = "${var.dockerhubauth_credentials_arn}"
   http_listener_arn                = "${module.cantaloupe.https_listener_arn}"
-
-### Not available yet ###
-#  depends_on = [
-#  "module.vpc",
-#  "module.alb",
-#  "module.fargate_iam_policies",
-#  "module.cantaloupe"
-#  ]
 }
 
 module "kakadu_converter_s3_tiff" {
@@ -132,6 +129,10 @@ module "kakadu_converter_lambda_tiff" {
   bucket_event = "${var.kakadu_converter_bucket_event}"
   trigger_s3_bucket_id = "${module.kakadu_converter_s3_tiff.bucket_id}"
   trigger_s3_bucket_arn = "${module.kakadu_converter_s3_tiff.bucket_arn}"
+
+
+  subnet_ids         = "${module.vpc.vpc_private_subnet_ids}"
+  security_group_ids = ["${module.sg_egress.id}"]
 }
 
 module "iiif_cloudfront" {
@@ -140,7 +141,9 @@ module "iiif_cloudfront" {
   app_public_dns_names    = "${var.iiif_public_dns_names}"
   app_origin_id           = "ALBOrigin-${var.iiif_alb_dns_name}"
   app_ssl_certificate_arn = "${var.iiif_cloudfront_ssl_certificate_arn}"
-  app_path_pattern        = "${var.iiif_thumbnail_path_pattern}"
+  app_path_pattern        = "${var.iiif_jpg_path_pattern}"
   app_price_class         = "${var.iiif_cloudfront_price_class}"
+  default_ttl             = "${var.iiif_jpg_default_ttl}"
+  max_ttl                 = "${var.iiif_jpg_max_ttl}"
 }
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TERRAFORM_VERSION="0.12.5"
+TERRAFORM_VERSION="0.12.6"
 TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
 TERRAFORM_BIN="${HOME}/terraform/bin"
 TERRAFORM="${TERRAFORM_BIN}/terraform"
