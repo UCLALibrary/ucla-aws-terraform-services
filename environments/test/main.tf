@@ -9,7 +9,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source                    = "git::https://github.com/UCLALibrary/aws_terraform_module_vpc.git?ref=IIIF-419"
+  source                    = "git::https://github.com/UCLALibrary/aws_terraform_module_vpc.git"
   vpc_cidr_block            = "${var.vpc_cidr_block}"
   public_subnet_count       = "${var.public_subnet_count}"
   public_subnet_init_value  = "${var.public_subnet_int}"
@@ -18,8 +18,6 @@ module "vpc" {
   vpc_endpoint              = "${var.vpc_endpoint}"
   create_vpc_endpoint       = "${var.create_vpc_endpoint}"
   enable_nat                = "${var.enable_nat}"
-  associate_existing_nat    = "${var.associate_existing_nat}" 
-  existing_private_nat_gateway_id = "${var.existing_private_nat_gateway_id}"
 }
 
 module "sg_egress" {
@@ -109,7 +107,7 @@ module "kakadu_converter_s3_tiff" {
 }
 
 module "kakadu_converter_lambda_tiff" {
-  source = "git::https://github.com/UCLALibrary/aws_terraform_lambda_module.git?ref=IIIF-419"
+  source = "git::https://github.com/UCLALibrary/aws_terraform_lambda_module.git"
 
   ## KakaduConverter lambda role setup
   cloudwatch_iam_allowed_actions = "${var.kakadu_converter_cloudwatch_permissions}"

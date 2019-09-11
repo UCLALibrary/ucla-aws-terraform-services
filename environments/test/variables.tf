@@ -25,8 +25,6 @@ variable "private_subnet_int" {}
 variable "vpc_endpoint" {}              
 variable "create_vpc_endpoint" {}          
 variable "enable_nat" {}
-variable "associate_existing_nat" {}
-variable "existing_private_nat_gateway_id" {}
 
 variable "vpc_main_id" {
   default = null
