@@ -2,41 +2,31 @@ terraform {
   backend "remote" {}
 }
 
+data "terraform_remote_state" "vpc" {
+  backend = "remote"
+  config = {
+    hostname = "${var.terraform_remote_hostname}"
+    token = "${var.terraform_remote_token}"
+    organization = "${var.terraform_remote_organization}"
+    workspaces = {
+      name = "${var.terraform_remote_networking_workspace}"
+    }
+  }
+}
+
 provider "aws" {
   shared_credentials_file = "${var.cred_file}"
   profile                 = "${var.cred_profile}"
   region                  = "${var.region}"
 }
 
-module "vpc" {
-  source                    = "git::https://github.com/UCLALibrary/aws_terraform_module_vpc.git"
-  vpc_cidr_block            = "${var.vpc_cidr_block}"
-  public_subnet_count       = "${var.public_subnet_count}"
-  public_subnet_init_value  = "${var.public_subnet_int}"
-  private_subnet_count      = "${var.private_subnet_count}"
-  private_subnet_init_value = "${var.private_subnet_int}"
-  vpc_endpoint              = "${var.vpc_endpoint}"
-  create_vpc_endpoint       = "${var.create_vpc_endpoint}"
-  enable_nat                = "${var.enable_nat}"
-}
-
-module "sg_egress" {
-  source           = "git::https://github.com/UCLALibrary/aws_terraform_module_security_group.git"
-  sg_name          = "iiif-egress_allowed"
-  sg_description   = "iiif-global-egress-rule"
-  vpc_id           = "${module.vpc.vpc_main_id}"
-  ingress_ports    = []
-  ingress_allowed  = null
-  sg_groups        = null
-}
-
 module "alb" {
   source         = "../../modules/alb"
   app_name       = "${var.iiif_app_name}"
-  vpc_main_id    = "${module.vpc.vpc_main_id}"
+  vpc_main_id    = data.terraform_remote_state.vpc.outputs.vpc_main_id
 
   ### NATS can get expensive for public facing traffic
-  vpc_subnet_ids = "${module.vpc.vpc_public_subnet_ids}"
+  vpc_subnet_ids = data.terraform_remote_state.vpc.outputs.vpc_public_subnet_ids
 }
 
 module "fargate_iam_policies" {
@@ -47,8 +37,8 @@ module "fargate_iam_policies" {
 
 module "cantaloupe" {
   source                                  = "../../modules/cantaloupe"
-  vpc_main_id                             = "${module.vpc.vpc_main_id}"
-  vpc_subnet_ids                          = "${module.vpc.vpc_public_subnet_ids}"
+  vpc_main_id                             = data.terraform_remote_state.vpc.outputs.vpc_main_id
+  vpc_subnet_ids                          = data.terraform_remote_state.vpc.outputs.vpc_public_subnet_ids
   alb_main_id                             = "${module.alb.alb_main_id}"
   alb_main_sg_id                          = "${module.alb.alb_main_sg_id}"
   app_port                                = "${var.cantaloupe_app_port}"
@@ -82,8 +72,8 @@ module "cantaloupe" {
 
 module "manifeststore" {
   source                           = "../../modules/manifeststore"
-  vpc_main_id                      = "${module.vpc.vpc_main_id}"
-  vpc_subnet_ids                   = "${module.vpc.vpc_public_subnet_ids}"
+  vpc_main_id                      = data.terraform_remote_state.vpc.outputs.vpc_main_id
+  vpc_subnet_ids                   = data.terraform_remote_state.vpc.outputs.vpc_public_subnet_ids
   alb_main_id                      = "${module.alb.alb_main_id}"
   alb_main_sg_id                   = "${module.alb.alb_main_sg_id}"
   app_port                         = "${var.manifeststore_app_port}"
@@ -131,8 +121,8 @@ module "kakadu_converter_lambda_tiff" {
   trigger_s3_bucket_arn = "${module.kakadu_converter_s3_tiff.bucket_arn}"
 
 
-  subnet_ids         = "${module.vpc.vpc_private_subnet_ids}"
-  security_group_ids = ["${module.sg_egress.id}"]
+  subnet_ids         = data.terraform_remote_state.vpc.outputs.vpc_private_subnet_ids
+  security_group_ids = [data.terraform_remote_state.vpc.outputs.sg_egress_id]
 }
 
 module "iiif_cloudfront" {
