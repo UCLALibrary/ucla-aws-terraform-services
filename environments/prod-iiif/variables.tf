@@ -1,7 +1,3 @@
-variable "tfstate_bucket_name" {
-  default = "services-terraform"
-}
-
 variable "cred_file" {
   default = "~/.aws/credentials/"
 }
@@ -14,21 +10,10 @@ variable "region" {
   default = "us-west-2"
 }
 
-variable "vpc_cidr_block" {
-  default = "172.20.0.0/16"
-}
-
-variable "public_subnet_count" {}
-variable "public_subnet_int" {}     
-variable "private_subnet_count" {}
-variable "private_subnet_int" {}
-variable "vpc_endpoint" {}              
-variable "create_vpc_endpoint" {}          
-variable "enable_nat" {}
-
-variable "vpc_main_id" {
-  default = null
-}
+variable "terraform_remote_hostname" {}
+variable "terraform_remote_token" {}
+variable "terraform_remote_organization" {}
+variable "terraform_remote_networking_workspace" {}
 
 variable "alb_main_sg_id" {
   default = null

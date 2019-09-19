@@ -5,7 +5,7 @@ TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/ter
 TERRAFORM_BIN="${HOME}/terraform/bin"
 TERRAFORM="${TERRAFORM_BIN}/terraform"
 
-AWS_ENV=("test", "prod")
+AWS_ENV=("test-iiif" "prod-iiif" "prod-network" "test-network" "prod-sinai")
 
 mkdir -p ${TERRAFORM_BIN}
 cd ${TERRAFORM_BIN}
@@ -19,3 +19,4 @@ do
   ${TERRAFORM} init -backend=false
   ${TERRAFORM} validate
 done
+

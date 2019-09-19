@@ -5,3 +5,4 @@
 *.plan
 *.jar
 *.hcl
+*crash.log
