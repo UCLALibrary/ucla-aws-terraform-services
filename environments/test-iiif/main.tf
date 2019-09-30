@@ -293,7 +293,7 @@ data "template_file" "fargate_iiif_definition" {
 }
 
 module "iiif_fargate" {
-  source                  = "git::https://github.com/UCLALibrary/aws_terraform_module_fargate.git?ref=IIIF-418"
+  source                  = "git::https://github.com/UCLALibrary/aws_terraform_module_fargate.git?ref=v0.2-beta"
   memory                  = "${var.container_host_memory}"
   cpu                     = "${var.container_host_cpu}"
   execution_role_arn      = "${module.iiif_fargate_ecs_iam_role.iam_role_arn}"
