@@ -5,14 +5,14 @@ This repository contains terraform configuration files that is used to provision
 ### Prerequisites
 * Terraform v0.12.9
 * Access to UCLA Library [Terraform Enterprise](https://app.terraform.io/session)
-** TFE User Token
+  * TFE User Token
 * Obtain local secrets file which is currently stored locally
 
 ### Steps to deploy
 * `cd environments/test-iiif`
 * cp -rp backend.hcl.sample backend.hcl
 * cp -rp yourlocalsecretsfile local.secrets
-** Edit your local.secrets file as needed
+  * Edit your local.secrets file as needed
 * bin/run
 * terraform apply plan.out
 
