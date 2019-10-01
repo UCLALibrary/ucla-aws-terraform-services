@@ -19,4 +19,4 @@ This repository contains terraform configuration files that is used to provision
 ### Steps to destroy
 * cd environments/test-iiif
 * bin/run destroy
-** Answer `y`
+  * Answer `y`
