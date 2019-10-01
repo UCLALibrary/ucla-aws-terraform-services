@@ -1,5 +1,5 @@
-# Production Environment
-* iiif.library.ucla.edu
+# Test Environment
+* test-iiif.library.ucla.edu
 
 ## Instructions
 This environment heavily utilizes modules to build AWS environments via Terraform. The only changes you should have to make are the following:
@@ -9,7 +9,7 @@ This environment heavily utilizes modules to build AWS environments via Terrafor
 After editing the vars file, you can run the bootstrap script
 
 ```
-cd environments/prod
+cd environments/test
 bin/deploy.sh
 terraform apply current.plan # confirm that you're OK with the plan generated first!
 ```
