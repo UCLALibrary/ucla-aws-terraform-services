@@ -1,6 +1,7 @@
 #!/bin/bash
 
 BACKEND_FILE="backend.hcl"
+TERRAFORM="/opt/terraform/bin/terraform"
 PLAN_FILE="current.plan"
 LOCAL_SECRETS="local.secrets"
 WORKSPACE="sinai-iiif"
@@ -11,22 +12,22 @@ then
   exit
 fi
 
-terraform init \
+${TERRAFORM} init \
   -backend-config="${BACKEND_FILE}"
 
-if [[ -z $(terraform workspace list | grep -i ${WORKSPACE}) ]];
+if [[ -z $(${TERRAFORM} workspace list | grep -i ${WORKSPACE}) ]];
 then
-  terraform workspace new ${WORKSPACE}
+  ${TERRAFORM} workspace new ${WORKSPACE}
 else
-  terraform workspace select ${WORKSPACE}
+  ${TERRAFORM} workspace select ${WORKSPACE}
 fi
 
-echo "Working in workspace: $(terraform workspace show)"
+echo "Working in workspace: $(${TERRAFORM} workspace show)"
 
 if [[ -f "${LOCAL_SECRETS}" ]];
 then
-  terraform plan -out ${PLAN_FILE} -var-file="${LOCAL_SECRETS}" 
+  ${TERRAFORM} plan -out ${PLAN_FILE} -var-file="${LOCAL_SECRETS}" 
 else
-  terraform plan -out ${PLAN_FILE}
+  ${TERRAFORM} plan -out ${PLAN_FILE}
 fi
 
