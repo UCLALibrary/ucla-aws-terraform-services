@@ -10,13 +10,13 @@ This repository contains terraform configuration files that is used to provision
 
 ### Steps to deploy
 * `cd environments/test-iiif`
-* cp -rp backend.hcl.sample backend.hcl
-* cp -rp yourlocalsecretsfile local.secrets
+* `cp -rp backend.hcl.sample backend.hcl`
+* `cp -rp yourlocalsecretsfile local.secrets`
   * Edit your local.secrets file as needed
-* bin/run
-* terraform apply plan.out
+* `bin/run`
+* `terraform apply plan.out`
 
 ### Steps to destroy
-* cd environments/test-iiif
-* bin/run destroy
+* `cd environments/test-iiif`
+* `bin/run destroy`
   * Answer `y`
