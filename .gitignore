@@ -2,7 +2,7 @@
 .sharecreds
 *.tfstate*
 *.secrets
-*.plan
+*plan.out*
 *.jar
 *.hcl
 *crash.log
