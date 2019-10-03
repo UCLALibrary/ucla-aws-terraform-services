@@ -32,7 +32,7 @@ resource "aws_codebuild_project" "docker-cantaloupe" {
 
   source {
     type            = "GITHUB"
-    location        = "https://github.com/UCLALibrary/docker-jp2-bucketeer.git"
+    location        = "https://github.com/UCLALibrary/docker-cantaloupe.git"
     buildspec       = ".buildspec.yml"
   }
 
