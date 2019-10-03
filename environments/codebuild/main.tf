@@ -46,12 +46,6 @@ resource "aws_codebuild_project" "docker-cantaloupe" {
 module "ssm_parameters" {
   source  = "app.terraform.io/UCLALibrary/ssmparameters/aws"
   version = "1.0.0"
-  ssm_list = "${var.ssm_parameters_map}"
-}
-
-module "encrypted_ssm_parameters" {
-  source  = "app.terraform.io/UCLALibrary/ssmparameters/aws"
-  version = "1.0.0"
-  ssm_list = "${var.secure_ssm_parameters_map}"
+  ssm_list = "${local.ssm_parameters_merged}"
 }
 
