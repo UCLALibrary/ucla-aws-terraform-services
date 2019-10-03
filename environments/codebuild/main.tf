@@ -45,6 +45,6 @@ resource "aws_codebuild_project" "docker-cantaloupe" {
 
 module "ssm_parameters" {
   source   = "git::https://github.com/UCLALibrary/terraform-ssm-parameters.git?ref=1.0.0"
-  ssm_list = "${var.ssm_parameters_list}"
+  ssm_list = "${var.ssm_parameters_map}"
 }
 
