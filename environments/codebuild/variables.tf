@@ -5,4 +5,5 @@ variable "codebuild_project_timeout_minutes" {}
 variable "codebuild_project_image" {}
 
 variable "ssm_parameters_map" { type = map }
+variable "secure_ssm_parameters_map" { type = map }
 
