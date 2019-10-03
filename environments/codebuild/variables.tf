@@ -4,3 +4,5 @@ variable "codebuild_project_description" {}
 variable "codebuild_project_timeout_minutes" {}
 variable "codebuild_project_image" {}
 
+variable "ssm_parameters_map" { type = map }
+

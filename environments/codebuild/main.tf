@@ -8,14 +8,14 @@ resource "aws_iam_role" "codebuild_role" {
 }
 
 resource "aws_iam_role_policy" "codebuild_policy_ssm_codebuild" {
-  role = "terraform-codebuild-shared-ssm-codebuild-policy"
+  role = "${aws_iam_role.codebuild_role.name}"
   policy = file("policies/ssm-codebuild-policy.json")
 }
 
-resource "aws_codebuild_project" "codebuild_project" {
-  name          = "${var.codebuild_project_name}"
-  description   = "${var.codebuild_project_description}"
-  build_timeout = "${var.codebuild_project_timeout_minutes}"
+resource "aws_codebuild_project" "docker-cantaloupe" {
+  name          = "docker-cantaloupe"
+  description   = "CodeBuild job for building docker-cantaloupe images"
+  build_timeout = "20"
   service_role  = "${aws_iam_role.codebuild_role.arn}"
   badge_enabled = true
 
@@ -43,10 +43,8 @@ resource "aws_codebuild_project" "codebuild_project" {
   }
 }
 
-resource "aws_ssm_parameter" "bucketeer_s3_access_key" {
-  name        = "AVTEST"
-  description = "AVTEST"
-  type        = "SecureString"
-  value       = "AVTEST"
+module "ssm_parameters" {
+  source   = "git::https://github.com/UCLALibrary/terraform-ssm-parameters.git?ref=1.0.0"
+  ssm_list = "${var.ssm_parameters_list}"
 }
 
