@@ -7,7 +7,7 @@ variable "codebuild_project_image" {}
 variable "ssm_parameters_map" { type = map }
 variable "secure_ssm_parameters_map" { type = map }
 
-local {
+locals {
   ssm_parameters_merged = merge("${var.ssm_parameters_map}", "${var.secure_ssm_parameters_map}")
 }
 
