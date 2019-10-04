@@ -7,6 +7,7 @@ This repository contains terraform configuration files that is used to provision
 * Access to UCLA Library [Terraform Enterprise](https://app.terraform.io/session)
   * TFE User Token
 * Obtain local secrets file which is currently stored locally
+* TF Cloud for CodeBuild
 
 ### Steps to deploy
 * `cd environments/test-iiif`
