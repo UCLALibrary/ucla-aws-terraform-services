@@ -35,20 +35,26 @@ module "iiif_fargate_ecs_iam_role" {
   iam_assume_policy_document = "${file("policies/assume-role-policy.json")}"
 }
 
-### Create IAM policy with template from previous step
+### Create IAM policy with template that grants secrets access
 resource "aws_iam_policy" "fargate_ecs_access_dockerhub_registry_policy" {
   name   = "${local.fargate_ecs_role_name}-dockerhub-credentials-access"
   policy = "${data.template_file.ecs_iam_init.rendered}"
 }
 
-### Attach AWS provided ECS execution policy to created IAM role
+### Create IAM policy that grants common ECS execution permissions
+resource "aws_iam_policy" "fargate_ecs_execution_policy" {
+  name   = "${local.fargate_ecs_role_name}-ecs-execution-policy"
+  policy = "${file("policies/ecs-execution-role-policy.json")}"
+}
+
+### Attach IAM policy to created role that grants ECS execution permissions
 resource "aws_iam_policy_attachment" "fargate_ecs_execution_role_policy_attachment" {
   name       = "${local.fargate_ecs_role_name}-attach-ecs-execution-privs"
   roles      = ["${module.iiif_fargate_ecs_iam_role.iam_role_name}"]
-  policy_arn = "${var.fargate_ecs_task_execution_role_arn}"
+  policy_arn = "${aws_iam_policy.fargate_ecs_execution_policy.arn}"
 }
 
-### Attach IAM policy that grants access to secrets manager from imported dockerhub t emplate
+### Attach IAM policy that grants access to secrets manager from imported dockerhub template
 resource "aws_iam_policy_attachment" "fargate_credentials_secrets_privilege" {
   name       = "${local.fargate_ecs_role_name}-attach-secrets-privs"
   roles      = ["${module.iiif_fargate_ecs_iam_role.iam_role_name}"]
