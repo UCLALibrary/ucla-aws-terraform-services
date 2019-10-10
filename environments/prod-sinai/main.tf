@@ -259,6 +259,20 @@ resource "aws_lb_listener_rule" "manifeststore_manifest" {
   }
 }
 
+resource "aws_lb_listener_rule" "manifeststore_healthcheck" {
+  listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/status/manifest-store"]
+  }
+}
+
 data "template_file" "fargate_iiif_definition" {
   template = "${file("templates/env_vars.properties.tpl")}"
   vars          = {
