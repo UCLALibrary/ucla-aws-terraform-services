@@ -52,14 +52,14 @@ variable "cantaloupe_s3_source_bucket" { default = "" }
 variable "cantaloupe_s3_source_basiclookup_suffix" { default = ".jpx" }
 variable "cantaloupe_source_static" { default = "S3Source" }
 variable "cantaloupe_heapsize" { default = "2g" }
-variable "cantaloupe_healthcheck_path" { default = "/" }
+variable "cantaloupe_healthcheck_path" { default = "/iiif/2" }
 
 # Manifeststore environment variables
 variable "manifeststore_memory" { default = "1024" }
 variable "manifeststore_cpu" { default = "1024" }
 variable "manifeststore_listening_port" { default = 8183 }
 variable "manifeststore_image_url" { default = "registry.hub.docker.com/uclalibrary/manifest-store:latest" }
-variable "manifeststore_healthcheck_path" { default = "/ping" }
+variable "manifeststore_healthcheck_path" { default = "/status/manifest-store" }
 variable "manifeststore_s3_bucket" { default = "" }
 variable "manifeststore_s3_access_key" { default = "" }
 variable "manifeststore_s3_secret_key" { default = "" }
