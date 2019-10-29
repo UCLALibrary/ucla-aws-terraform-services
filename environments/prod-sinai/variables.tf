@@ -53,6 +53,11 @@ variable "cantaloupe_s3_source_basiclookup_suffix" { default = ".jpx" }
 variable "cantaloupe_source_static" { default = "S3Source" }
 variable "cantaloupe_heapsize" { default = "2g" }
 variable "cantaloupe_healthcheck_path" { default = "/iiif/2" }
+variable "cantaloupe_delegate_path" { default = "/usr/local/cantaloupe/delegates.rb" }
+variable "cantaloupe_delegate_enabled" { default = "true" }
+variable "delegate_url" { default = "https://raw.githubusercontent.com/UCLALibrary/cantaloupe-delegate/master/lib/delegates.rb" }
+variable "cipher_text" { default = "text" }
+variable "cipher_key" { default = "key" }
 
 # Manifeststore environment variables
 variable "manifeststore_memory" { default = "1024" }

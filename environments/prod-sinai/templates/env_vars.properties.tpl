@@ -30,6 +30,11 @@
       { "name" : "CANTALOUPE_S3SOURCE_BASICLOOKUPSTRATEGY_BUCKET_NAME", "value" : "${cantaloupe_s3_source_bucket}" },
       { "name" : "CANTALOUPE_S3SOURCE_BASICLOOKUPSTRATEGY_PATH_SUFFIX", "value" : "${cantaloupe_s3_source_basiclookup_suffix}" },
       { "name" : "CANTALOUPE_SOURCE_STATIC", "value" : "${cantaloupe_source_static}" },
+      { "name" : "CANTALOUPE_DELEGATE_SCRIPT_ENABLED", "value" : "${cantaloupe_delegate_enabled}" },
+      { "name" : "CANTALOUPE_DELEGATE_SCRIPT_PATHNAME", "value" : "${cantaloupe_delegate_path}" },
+      { "name" : "DELEGATE_URL", "value" : "${delegate_url}" },
+      { "name" : "CIPHER_TEXT", "value" : "${cipher_text}" },
+      { "name" : "CIPHER_KEY", "value" : "${cipher_key}" },
       { "name" : "JAVA_HEAP_SIZE", "value" : "${cantaloupe_heapsize}" }
     ]
   },
