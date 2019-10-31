@@ -309,6 +309,12 @@ data "template_file" "fargate_iiif_definition" {
     manifeststore_memory                    = "${var.manifeststore_memory}"
     manifeststore_cpu                       = "${var.manifeststore_cpu}"
     manifeststore_image_url                 = "${var.manifeststore_image_url}"
+    cantaloupe_delegate_enabled             = "${var.cantaloupe_delegate_enabled}"
+    cantaloupe_delegate_path                = "${var.cantaloupe_delegate_path}"
+    cantaloupe_source_delegate              = "${var.cantaloupe_source_delegate}"
+    delegate_url                            = "${var.delegate_url}"
+    cipher_text                             = "${var.cipher_text}"
+    cipher_key                              = "${var.cipher_key}"
   }
 }
 
