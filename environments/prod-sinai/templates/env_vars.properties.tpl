@@ -32,6 +32,7 @@
       { "name" : "CANTALOUPE_SOURCE_STATIC", "value" : "${cantaloupe_source_static}" },
       { "name" : "CANTALOUPE_DELEGATE_SCRIPT_ENABLED", "value" : "${cantaloupe_delegate_enabled}" },
       { "name" : "CANTALOUPE_DELEGATE_SCRIPT_PATHNAME", "value" : "${cantaloupe_delegate_path}" },
+      { "name" : "CANTALOUPE_SOURCE_DELEGATE", "value" : "${cantaloupe_source_delegate}" },
       { "name" : "DELEGATE_URL", "value" : "${delegate_url}" },
       { "name" : "CIPHER_TEXT", "value" : "${cipher_text}" },
       { "name" : "CIPHER_KEY", "value" : "${cipher_key}" },

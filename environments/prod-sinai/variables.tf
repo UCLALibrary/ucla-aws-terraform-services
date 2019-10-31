@@ -55,6 +55,7 @@ variable "cantaloupe_heapsize" { default = "2g" }
 variable "cantaloupe_healthcheck_path" { default = "/iiif/2" }
 variable "cantaloupe_delegate_path" { default = "/usr/local/cantaloupe/delegates.rb" }
 variable "cantaloupe_delegate_enabled" { default = "true" }
+variable "cantaloupe_source_delegate" { default = "true" }
 variable "delegate_url" { default = "https://raw.githubusercontent.com/UCLALibrary/cantaloupe-delegate/master/lib/delegates.rb" }
 variable "cipher_text" { default = "text" }
 variable "cipher_key" { default = "key" }
