@@ -69,6 +69,14 @@ module "cantaloupe_src_bucket" {
   force_destroy_flag = "${var.force_destroy_src_bucket}"
 }
 
+### Create a cantaloupe cache bucket
+module "cantaloupe_cache_bucket" {
+  source             = "git::https://github.com/UCLALibrary/aws_terraform_s3_module.git"
+  bucket_name        = "${var.cantaloupe_s3_cache_bucket}"
+  bucket_region      = "${var.region}"
+  force_destroy_flag = "${var.force_destroy_cache_bucket}"
+}
+
 ### Create a manifeststore source bucket
 module "manifeststore_bucket" {
   source             = "git::https://github.com/UCLALibrary/aws_terraform_s3_module.git"
@@ -76,7 +84,6 @@ module "manifeststore_bucket" {
   bucket_region      = "${var.region}"
   force_destroy_flag = "${var.force_destroy_src_bucket}"
 }
-
 
 ### Create a security group that allows 80/443 access to the AWS Load Balancers
 resource "aws_security_group" "allow_alb_web" {

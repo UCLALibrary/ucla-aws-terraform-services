@@ -18,6 +18,7 @@ variable "fargate_ecs_task_execution_role_arn" { default = "arn:aws:iam::aws:pol
 
 # Flag to destroy src buckets
 variable "force_destroy_src_bucket" { default = "false" }
+variable "force_destroy_cache_bucket" { default = "false" }
 
 # Fargate IIIF Settings
 variable "container_host_memory" { default = "2048" }
