@@ -295,6 +295,7 @@ data "template_file" "fargate_iiif_definition" {
     cantaloupe_cache_server_derivative      = "${var.cantaloupe_cache_server_derivative}"
     cantaloupe_cache_server_derivative_ttl  = "${var.cantaloupe_cache_server_derivative_ttl}"
     cantaloupe_cache_server_purge_missing   = "${var.cantaloupe_cache_server_purge_missing}"
+    cantaloupe_cache_server_resolve_first   = "${var.cantaloupe_cache_server_resolve_first}"
     cantaloupe_processor_selection_strategy = "${var.cantaloupe_processor_selection_strategy}"
     cantaloupe_manual_processor_jp2         = "${var.cantaloupe_manual_processor_jp2}"
     cantaloupe_s3_cache_access_key          = "${var.cantaloupe_s3_cache_access_key}"
