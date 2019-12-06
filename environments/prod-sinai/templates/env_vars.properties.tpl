@@ -24,6 +24,7 @@
       { "name" : "CANTALOUPE_S3CACHE_SECRET_KEY", "value" : "${cantaloupe_s3_cache_secret_key}" },
       { "name" : "CANTALOUPE_S3CACHE_ENDPOINT", "value" : "${cantaloupe_s3_cache_endpoint}" },
       { "name" : "CANTALOUPE_S3CACHE_BUCKET_NAME", "value" : "${cantaloupe_s3_cache_bucket}" },
+      { "name" : "CANTALOUPE_CACHE_SERVER_RESOLVE_FIRST", "value" : "${cantaloupe_cache_server_resolve_first}" },
       { "name" : "CANTALOUPE_S3SOURCE_ACCESS_KEY_ID", "value" : "${cantaloupe_s3_source_access_key}" },
       { "name" : "CANTALOUPE_S3SOURCE_SECRET_KEY", "value" : "${cantaloupe_s3_source_secret_key}" },
       { "name" : "CANTALOUPE_S3SOURCE_ENDPOINT", "value" : "${cantaloupe_s3_source_endpoint}" },

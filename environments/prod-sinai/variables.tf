@@ -40,6 +40,7 @@ variable "cantaloupe_enable_cache_server" { default = "false" }
 variable "cantaloupe_cache_server_derivative" { default = "S3Cache" }
 variable "cantaloupe_cache_server_derivative_ttl" { default = "0" }
 variable "cantaloupe_cache_server_purge_missing" { default = "true" }
+variable "cantaloupe_cache_server_resolve_first" { default = "true" }
 variable "cantaloupe_processor_selection_strategy" { default = "ManualSelectionStrategy" }
 variable "cantaloupe_manual_processor_jp2" { default = "KakaduNativeProcessor" }
 variable "cantaloupe_s3_cache_access_key" { default = "something" }
