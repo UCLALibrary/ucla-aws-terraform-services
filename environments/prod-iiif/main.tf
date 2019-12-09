@@ -245,20 +245,6 @@ resource "aws_lb_listener_rule" "fester_healthcheck" {
   }
 }
 
-resource "aws_lb_listener_rule" "manifeststore_docs" {
-  listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
-
-  action {
-    type             = "forward"
-    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
-  }
-
-  condition {
-    field  = "path-pattern"
-    values = ["/docs/manifest-store*"]
-  }
-}
-
 resource "aws_lb_listener_rule" "fester_collection" {
   listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
 
@@ -284,20 +270,6 @@ resource "aws_lb_listener_rule" "fester_manifest" {
   condition {
     field  = "path-pattern"
     values = ["/*/manifest"]
-  }
-}
-
-resource "aws_lb_listener_rule" "manifeststore_healthcheck" {
-  listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
-
-  action {
-    type             = "forward"
-    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
-  }
-
-  condition {
-    field  = "path-pattern"
-    values = ["/status/manifest-store"]
   }
 }
 
