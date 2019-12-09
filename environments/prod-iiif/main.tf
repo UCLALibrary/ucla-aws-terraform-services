@@ -217,6 +217,34 @@ resource "aws_lb_listener" "iiif_https_listener" {
   depends_on = ["module.alb"]
 }
 
+resource "aws_lb_listener_rule" "fester_docs" {
+  listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/docs/fester/*"]
+  }
+}
+
+resource "aws_lb_listener_rule" "fester_healthcheck" {
+  listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/status/fester"]
+  }
+}
+
 resource "aws_lb_listener_rule" "manifeststore_docs" {
   listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
 
@@ -231,7 +259,7 @@ resource "aws_lb_listener_rule" "manifeststore_docs" {
   }
 }
 
-resource "aws_lb_listener_rule" "manifeststore_collection" {
+resource "aws_lb_listener_rule" "fester_collection" {
   listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
 
   action {
@@ -245,7 +273,7 @@ resource "aws_lb_listener_rule" "manifeststore_collection" {
   }
 }
 
-resource "aws_lb_listener_rule" "manifeststore_manifest" {
+resource "aws_lb_listener_rule" "fester_manifest" {
   listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
 
   action {
