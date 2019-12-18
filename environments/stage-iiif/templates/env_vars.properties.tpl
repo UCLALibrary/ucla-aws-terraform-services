@@ -46,7 +46,7 @@
       }
     ],
     "environment": [
-      { "name" : "HTTP_PORT", "value" : "${fester_listening_port}" },
+      { "name" : "FESTER_HTTP_PORT", "value" : "${fester_listening_port}" },
       { "name" : "FESTER_S3_ACCESS_KEY", "value" : "${fester_s3_access_key}" },
       { "name" : "FESTER_S3_BUCKET", "value" : "${fester_s3_bucket}" },
       { "name" : "FESTER_S3_REGION", "value" : "${fester_s3_region}" },

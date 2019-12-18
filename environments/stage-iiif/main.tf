@@ -219,7 +219,7 @@ resource "aws_lb_listener_rule" "fester_docs" {
 
   condition {
     path_pattern {
-      values = ["/docs/fester/*"]
+      values = ["/docs/fester*"]
     }
   }
 }
@@ -319,7 +319,7 @@ data "template_file" "fargate_iiif_definition" {
     fester_s3_bucket                        = "${var.fester_s3_bucket}"
     fester_memory                           = "${var.fester_memory}"
     fester_cpu                              = "${var.fester_cpu}"
-    fester_image_url                        = "${var.fester_image_url}"
+    fester_image_url                        = "${local.fester_docker_image_url}"
   }
 }
 
