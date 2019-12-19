@@ -54,16 +54,17 @@ variable "cantaloupe_source_static" { default = "S3Source" }
 variable "cantaloupe_heapsize" { default = "2g" }
 variable "cantaloupe_healthcheck_path" { default = "/iiif/2" }
 
-# Manifeststore environment variables
-variable "manifeststore_memory" { default = "1024" }
-variable "manifeststore_cpu" { default = "1024" }
-variable "manifeststore_listening_port" { default = 8183 }
-variable "manifeststore_image_url" { default = "registry.hub.docker.com/uclalibrary/manifest-store:latest" }
-variable "manifeststore_healthcheck_path" { default = "/status/manifest-store" }
-variable "manifeststore_s3_bucket" { default = "" }
-variable "manifeststore_s3_access_key" { default = "" }
-variable "manifeststore_s3_secret_key" { default = "" }
-variable "manifeststore_s3_region" { default = "" }
+# fester environment variables
+variable "fester_memory" { default = "1024" }
+variable "fester_cpu" { default = "1024" }
+variable "fester_listening_port" { default = 8183 }
+variable "fester_image_url" { default = "registry.hub.docker.com/uclalibrary/fester" }
+variable "fester_image_tag" { default = "latest" }
+variable "fester_healthcheck_path" { default = "/status/fester" }
+variable "fester_s3_bucket" { default = "" }
+variable "fester_s3_access_key" { default = "" }
+variable "fester_s3_secret_key" { default = "" }
+variable "fester_s3_region" { default = "" }
 
 ## KakaduConverter Variables
 variable kakadu_converter_s3_tiff_bucket {}
@@ -102,6 +103,7 @@ locals {
   fargate_cluster_name     = "${var.iiif_app_name}-fargate-cluster"
   fargate_service_name     = "${var.iiif_app_name}-fargate-service"
   fargate_definition_name  = "${var.iiif_app_name}-fargate-definition"
+  fester_docker_image_url  = "${var.fester_image_url}:${var.fester_image_tag}"
   cantaloupe_s3_src_bucket = "${var.iiif_app_name}-src-bucket"
   sg_name                  = "${var.iiif_app_name}-security-group"
   fargate_associate_tg     = [
@@ -111,9 +113,9 @@ locals {
       container_port = "${var.cantaloupe_listening_port}"
     },
     {
-      arn = "${aws_lb_target_group.manifeststore_tg.arn}"
-      container_name = "${local.fargate_definition_name}-manifeststore"
-      container_port = "${var.manifeststore_listening_port}"
+      arn = "${aws_lb_target_group.fester_tg.arn}"
+      container_name = "${local.fargate_definition_name}-fester"
+      container_port = "${var.fester_listening_port}"
     }
   ]
 }

@@ -34,23 +34,23 @@
     ]
   },
   {
-    "name": "${fargate_definition_name}-manifeststore",
+    "name": "${fargate_definition_name}-fester",
     "repositoryCredentials": { "credentialsParameter": "${registry_auth_arn}" },
-    "memory": ${manifeststore_memory},
-    "image": "${manifeststore_image_url}",
+    "memory": ${fester_memory},
+    "image": "${fester_image_url}",
     "networkMode": "awsvpc",
     "portMappings": [
       {
-        "containerPort": ${manifeststore_listening_port},
-        "hostPort": ${manifeststore_listening_port}
+        "containerPort": ${fester_listening_port},
+        "hostPort": ${fester_listening_port}
       }
     ],
     "environment": [
-      { "name" : "HTTP_PORT", "value" : "${manifeststore_listening_port}" },
-      { "name" : "MANIFESTSTORE_S3_ACCESS_KEY", "value" : "${manifeststore_s3_access_key}" },
-      { "name" : "MANIFESTSTORE_S3_BUCKET", "value" : "${manifeststore_s3_bucket}" },
-      { "name" : "MANIFESTSTORE_S3_REGION", "value" : "${manifeststore_s3_region}" },
-      { "name" : "MANIFESTSTORE_S3_SECRET_KEY", "value" : "${manifeststore_s3_secret_key}" }
+      { "name" : "FESTER_HTTP_PORT", "value" : "${fester_listening_port}" },
+      { "name" : "FESTER_S3_ACCESS_KEY", "value" : "${fester_s3_access_key}" },
+      { "name" : "FESTER_S3_BUCKET", "value" : "${fester_s3_bucket}" },
+      { "name" : "FESTER_S3_REGION", "value" : "${fester_s3_region}" },
+      { "name" : "FESTER_S3_SECRET_KEY", "value" : "${fester_s3_secret_key}" }
     ]
   }
 ]
