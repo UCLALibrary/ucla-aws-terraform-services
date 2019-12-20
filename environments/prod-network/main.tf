@@ -20,6 +20,18 @@ module "vpc" {
   enable_nat                = "${var.enable_nat}"
 }
 
+resource "aws_route" "route_sinai_dest_to_nat1" {
+  route_table_id         = "${module.vpc.public_network_route_table_id}"
+  destination_cidr_block = "52.25.18.100/32"
+  nat_gateway_id         = "${module.vpc.private_nat_gateway_id}"
+}
+
+resource "aws_route" "route_sinai_dest_to_nat2" {
+  route_table_id         = "${module.vpc.public_network_route_table_id}"
+  destination_cidr_block = "52.24.198.56/32"
+  nat_gateway_id         = "${module.vpc.private_nat_gateway_id}"
+}
+
 module "sg_egress" {
   source           = "git::https://github.com/UCLALibrary/aws_terraform_module_security_group.git"
   sg_name          = "iiif-egress_allowed"
