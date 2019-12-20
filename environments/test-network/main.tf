@@ -9,7 +9,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source                    = "git::https://github.com/UCLALibrary/aws_terraform_module_vpc.git"
+  source                    = "git::https://github.com/UCLALibrary/aws_terraform_module_vpc.git?ref=IIIF-603"
   vpc_cidr_block            = "${var.vpc_cidr_block}"
   public_subnet_count       = "${var.public_subnet_count}"
   public_subnet_init_value  = "${var.public_subnet_int}"
@@ -18,6 +18,18 @@ module "vpc" {
   vpc_endpoint              = "${var.vpc_endpoint}"
   create_vpc_endpoint       = "${var.create_vpc_endpoint}"
   enable_nat                = "${var.enable_nat}"
+}
+
+resource "aws_route" "route_sinai_dest_to_nat1" {
+  route_table_id         = "${module.vpc.public_network_route_table}"
+  destination_cidr_block = "52.25.18.100/32"
+  nat_gateway_id         = "${module.vpc.private_nat_gateway_id}"
+}
+
+resource "aws_route" "route_sinai_dest_to_nat2" {
+  route_table_id         = "${module.vpc.public_network_route_table}"
+  destination_cidr_block = "52.24.198.56/32"
+  nat_gateway_id         = "${module.vpc.private_nat_gateway_id}"
 }
 
 module "sg_egress" {
