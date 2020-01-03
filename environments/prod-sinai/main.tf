@@ -77,14 +77,6 @@ module "cantaloupe_cache_bucket" {
   force_destroy_flag = "${var.force_destroy_cache_bucket}"
 }
 
-### Create a manifeststore source bucket
-module "manifeststore_bucket" {
-  source             = "git::https://github.com/UCLALibrary/aws_terraform_s3_module.git"
-  bucket_name        = "${var.manifeststore_s3_bucket}"
-  bucket_region      = "${var.region}"
-  force_destroy_flag = "${var.force_destroy_src_bucket}"
-}
-
 ### Create a security group that allows 80/443 access to the AWS Load Balancers
 resource "aws_security_group" "allow_alb_web" {
   name          = "${var.iiif_app_name}-alb-allow-web"
@@ -126,13 +118,6 @@ resource "aws_security_group" "allow_alb_listening_port" {
     security_groups = ["${aws_security_group.allow_alb_web.id}"]
   }
 
-  ingress {
-    from_port       = "${var.manifeststore_listening_port}"
-    to_port         = "${var.manifeststore_listening_port}"
-    protocol        = "tcp"
-    security_groups = ["${aws_security_group.allow_alb_web.id}"]
-  }
-
   egress {
     from_port       = 0
     to_port         = 0
@@ -162,25 +147,6 @@ resource "aws_lb_target_group" "cantaloupe_tg" {
   health_check {
     path = "${var.cantaloupe_healthcheck_path}"
     port = "${var.cantaloupe_listening_port}"
-    healthy_threshold = 5
-    unhealthy_threshold = 2
-    timeout = 5
-    interval = 15
-    matcher = "200"
-  }
-}
-
-### Create a target group pointing to Manifeststore on the IIIF cluster
-resource "aws_lb_target_group" "manifeststore_tg" {
-  name        = "${var.iiif_app_name}-manifeststore-tg"
-  protocol    = "HTTP"
-  vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_main_id
-  target_type = "ip"
-  port        = "${var.manifeststore_listening_port}"
-
-  health_check {
-    path = "${var.manifeststore_healthcheck_path}"
-    port = "${var.manifeststore_listening_port}"
     healthy_threshold = 5
     unhealthy_threshold = 2
     timeout = 5
@@ -224,62 +190,6 @@ resource "aws_lb_listener" "iiif_https_listener" {
   depends_on = ["module.alb"]
 }
 
-resource "aws_lb_listener_rule" "manifeststore_docs" {
-  listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
-
-  action {
-    type             = "forward"
-    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
-  }
-
-  condition {
-    field  = "path-pattern"
-    values = ["/docs/manifest-store*"]
-  }
-}
-
-resource "aws_lb_listener_rule" "manifeststore_collection" {
-  listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
-
-  action {
-    type             = "forward"
-    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
-  }
-
-  condition {
-    field  = "path-pattern"
-    values = ["/collection/*"]
-  }
-}
-
-resource "aws_lb_listener_rule" "manifeststore_manifest" {
-  listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
-
-  action {
-    type             = "forward"
-    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
-  }
-
-  condition {
-    field  = "path-pattern"
-    values = ["/*/manifest"]
-  }
-}
-
-resource "aws_lb_listener_rule" "manifeststore_healthcheck" {
-  listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
-
-  action {
-    type             = "forward"
-    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
-  }
-
-  condition {
-    field  = "path-pattern"
-    values = ["/status/manifest-store"]
-  }
-}
-
 data "template_file" "fargate_iiif_definition" {
   template = "${file("templates/env_vars.properties.tpl")}"
   vars          = {
@@ -309,14 +219,6 @@ data "template_file" "fargate_iiif_definition" {
     cantaloupe_s3_source_basiclookup_suffix = "${var.cantaloupe_s3_source_basiclookup_suffix}"
     cantaloupe_source_static                = "${var.cantaloupe_source_static}"
     cantaloupe_heapsize                     = "${var.cantaloupe_heapsize}"
-    manifeststore_listening_port            = "${var.manifeststore_listening_port}"
-    manifeststore_s3_access_key             = "${var.manifeststore_s3_access_key}"
-    manifeststore_s3_secret_key             = "${var.manifeststore_s3_secret_key}"
-    manifeststore_s3_region                 = "${var.manifeststore_s3_region}"
-    manifeststore_s3_bucket                 = "${var.manifeststore_s3_bucket}"
-    manifeststore_memory                    = "${var.manifeststore_memory}"
-    manifeststore_cpu                       = "${var.manifeststore_cpu}"
-    manifeststore_image_url                 = "${var.manifeststore_image_url}"
     cantaloupe_delegate_enabled             = "${var.cantaloupe_delegate_enabled}"
     cantaloupe_delegate_path                = "${var.cantaloupe_delegate_path}"
     cantaloupe_source_delegate              = "${var.cantaloupe_source_delegate}"
