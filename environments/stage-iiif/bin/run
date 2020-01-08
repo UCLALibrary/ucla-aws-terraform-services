@@ -33,7 +33,7 @@ then
   then
     terraform destroy -var-file="${LOCAL_SECRETS}"
   else
-    terraform plan -out ${PLAN_FILE} -var-file="${LOCAL_SECRETS}" 
+    terraform plan -out ${PLAN_FILE} -var-file="${LOCAL_SECRETS}"
   fi
 else
   terraform plan -out ${PLAN_FILE}

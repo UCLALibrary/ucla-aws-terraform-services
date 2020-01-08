@@ -2,6 +2,9 @@
 variable "region" { default = "us-west-2" }
 variable "aws_profile" { default = "default" }
 
+# Load Balancer Settings
+variable "lb_idle_timeout" { default = "300" }
+
 # Needed to reference remote state VPC networks
 variable "terraform_remote_hostname" {}
 variable "terraform_remote_token" {}
@@ -18,6 +21,7 @@ variable "fargate_ecs_task_execution_role_arn" { default = "arn:aws:iam::aws:pol
 
 # Flag to destroy src buckets
 variable "force_destroy_src_bucket" { default = "false" }
+variable "force_destroy_cache_bucket" { default = "false" }
 
 # Fargate IIIF Settings
 variable "container_host_memory" { default = "2048" }
@@ -53,6 +57,9 @@ variable "cantaloupe_s3_source_basiclookup_suffix" { default = ".jpx" }
 variable "cantaloupe_source_static" { default = "S3Source" }
 variable "cantaloupe_heapsize" { default = "2g" }
 variable "cantaloupe_healthcheck_path" { default = "/iiif/2" }
+variable "cantaloupe_cloudwatch_log_group" { default = "/ecs/stage-iiif" }
+variable "cantaloupe_cloudwatch_region" { default = "us-west-2" }
+variable "cantaloupe_cloudwatch_stream_prefix" { default = "cantaloupe_" }
 
 # Fester environment variables
 variable "fester_memory" { default = "1024" }
@@ -65,6 +72,10 @@ variable "fester_s3_bucket" { default = "" }
 variable "fester_s3_access_key" { default = "" }
 variable "fester_s3_secret_key" { default = "" }
 variable "fester_s3_region" { default = "" }
+variable "fester_iiif_base_url" { default = "https://stage-iiif.library.ucla.edu/iiif/2" }                                                                                                               
+variable "fester_cloudwatch_log_group" { default = "/ecs/stage-iiif" }
+variable "fester_cloudwatch_region" { default = "us-west-2" }
+variable "fester_cloudwatch_stream_prefix" { default = "fester_" }
 
 # CloudFront Settings
 variable iiif_alb_dns_name {}
