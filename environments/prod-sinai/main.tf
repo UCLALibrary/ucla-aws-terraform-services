@@ -225,6 +225,9 @@ data "template_file" "fargate_iiif_definition" {
     delegate_url                            = "${var.delegate_url}"
     cipher_text                             = "${var.cipher_text}"
     cipher_key                              = "${var.cipher_key}"
+    cantaloupe_cloudwatch_log_group         = "${var.cantaloupe_cloudwatch_log_group}"
+    cantaloupe_cloudwatch_region            = "${var.cantaloupe_cloudwatch_region}"
+    cantaloupe_cloudwatch_stream_prefix     = "${var.cantaloupe_cloudwatch_stream_prefix}"
   }
 }
 

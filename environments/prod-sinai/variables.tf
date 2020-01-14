@@ -61,6 +61,9 @@ variable "cantaloupe_source_delegate" { default = "true" }
 variable "delegate_url" { default = "https://raw.githubusercontent.com/UCLALibrary/cantaloupe-delegate/master/lib/delegates.rb" }
 variable "cipher_text" { default = "text" }
 variable "cipher_key" { default = "key" }
+variable "cantaloupe_cloudwatch_log_group" { default = "/ecs/prod-sinai-iiif" }
+variable "cantaloupe_cloudwatch_region" { default = "us-west-2" }
+variable "cantaloupe_cloudwatch_stream_prefix" { default = "cantaloupe_" }
 
 ## KakaduConverter Variables
 variable kakadu_converter_s3_tiff_bucket {}

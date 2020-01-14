@@ -5,6 +5,14 @@
     "memory": ${cantaloupe_memory},
     "image": "${cantaloupe_image_url}",
     "networkMode": "awsvpc",
+    "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-group": "${cantaloupe_cloudwatch_log_group}",
+            "awslogs-region": "${cantaloupe_cloudwatch_region}",
+            "awslogs-stream-prefix": "${cantaloupe_cloudwatch_stream_prefix}"
+         }
+    },
     "portMappings": [
       {
         "containerPort": ${cantaloupe_listening_port},
