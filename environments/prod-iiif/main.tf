@@ -69,6 +69,14 @@ module "cantaloupe_src_bucket" {
   force_destroy_flag = "${var.force_destroy_src_bucket}"
 }
 
+### Create a cantaloupe cache bucket
+module "cantaloupe_cache_bucket" {
+  source             = "git::https://github.com/UCLALibrary/aws_terraform_s3_module.git"
+  bucket_name        = "${var.cantaloupe_s3_cache_bucket}"
+  bucket_region      = "${var.region}"
+  force_destroy_flag = "${var.force_destroy_cache_bucket}"
+}
+
 ### Create a manifeststore source bucket
 module "manifeststore_bucket" {
   source             = "git::https://github.com/UCLALibrary/aws_terraform_s3_module.git"
@@ -77,6 +85,13 @@ module "manifeststore_bucket" {
   force_destroy_flag = "${var.force_destroy_src_bucket}"
 }
 
+### Create a fester source bucket
+module "fester_bucket" {
+  source             = "git::https://github.com/UCLALibrary/aws_terraform_s3_module.git"
+  bucket_name        = "${var.fester_s3_bucket}"
+  bucket_region      = "${var.region}"
+  force_destroy_flag = "${var.force_destroy_src_bucket}"
+}
 
 ### Create a security group that allows 80/443 access to the AWS Load Balancers
 resource "aws_security_group" "allow_alb_web" {
@@ -120,8 +135,8 @@ resource "aws_security_group" "allow_alb_listening_port" {
   }
 
   ingress {
-    from_port       = "${var.manifeststore_listening_port}"
-    to_port         = "${var.manifeststore_listening_port}"
+    from_port       = "${var.fester_listening_port}"
+    to_port         = "${var.fester_listening_port}"
     protocol        = "tcp"
     security_groups = ["${aws_security_group.allow_alb_web.id}"]
   }
@@ -141,6 +156,7 @@ module "alb" {
 
   vpc_subnet_ids = data.terraform_remote_state.vpc.outputs.vpc_public_subnet_ids
   alb_security_groups = ["${aws_security_group.allow_alb_web.id}"]
+  idle_timeout = "${var.lb_idle_timeout}"
 }
 
 
@@ -157,26 +173,26 @@ resource "aws_lb_target_group" "cantaloupe_tg" {
     port = "${var.cantaloupe_listening_port}"
     healthy_threshold = 5
     unhealthy_threshold = 2
-    timeout = 5
+    timeout = 10
     interval = 15
     matcher = "200"
   }
 }
 
 ### Create a target group pointing to Manifeststore on the IIIF cluster
-resource "aws_lb_target_group" "manifeststore_tg" {
-  name        = "${var.iiif_app_name}-manifeststore-tg"
+resource "aws_lb_target_group" "fester_tg" {
+  name        = "${var.iiif_app_name}-fester-tg"
   protocol    = "HTTP"
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_main_id
   target_type = "ip"
-  port        = "${var.manifeststore_listening_port}"
+  port        = "${var.fester_listening_port}"
 
   health_check {
-    path = "${var.manifeststore_healthcheck_path}"
-    port = "${var.manifeststore_listening_port}"
+    path = "${var.fester_healthcheck_path}"
+    port = "${var.fester_listening_port}"
     healthy_threshold = 5
     unhealthy_threshold = 2
-    timeout = 5
+    timeout = 10
     interval = 15
     matcher = "200"
   }
@@ -217,17 +233,33 @@ resource "aws_lb_listener" "iiif_https_listener" {
   depends_on = ["module.alb"]
 }
 
-resource "aws_lb_listener_rule" "fester_docs" {
+resource "aws_lb_listener_rule" "fester_docs_root" {
   listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
 
   action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
+    target_group_arn = "${aws_lb_target_group.fester_tg.arn}"
   }
 
   condition {
-    field  = "path-pattern"
-    values = ["/docs/fester/*"]
+    path_pattern {
+      values = ["/docs/fester"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "fester_docs_subpath" {
+  listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.fester_tg.arn}"
+  }
+
+  condition {
+    path_pattern {
+      values = ["/docs/fester/*"]
+    }
   }
 }
 
@@ -236,12 +268,13 @@ resource "aws_lb_listener_rule" "fester_healthcheck" {
 
   action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
+    target_group_arn = "${aws_lb_target_group.fester_tg.arn}"
   }
 
   condition {
-    field  = "path-pattern"
-    values = ["/status/fester"]
+    path_pattern {
+      values = ["/status/fester"]
+    }
   }
 }
 
@@ -250,12 +283,13 @@ resource "aws_lb_listener_rule" "fester_collections_root" {
 
   action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
+    target_group_arn = "${aws_lb_target_group.fester_tg.arn}"
   }
 
   condition {
-    field  = "path-pattern"
-    values = ["/collections"]
+    path_pattern {
+      values = ["/collections"]
+    }
   }
 }
 
@@ -264,12 +298,13 @@ resource "aws_lb_listener_rule" "fester_collections_subpath" {
 
   action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
+    target_group_arn = "${aws_lb_target_group.fester_tg.arn}"
   }
 
   condition {
-    field  = "path-pattern"
-    values = ["/collections/*"]
+    path_pattern {
+      values = ["/collections/*"]
+    }
   }
 }
 
@@ -278,12 +313,13 @@ resource "aws_lb_listener_rule" "fester_manifest" {
 
   action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.manifeststore_tg.arn}"
+    target_group_arn = "${aws_lb_target_group.fester_tg.arn}"
   }
 
   condition {
-    field  = "path-pattern"
-    values = ["/*/manifest"]
+    path_pattern {
+      values = ["/*/manifest"]
+    }
   }
 }
 
@@ -315,14 +351,21 @@ data "template_file" "fargate_iiif_definition" {
     cantaloupe_s3_source_basiclookup_suffix = "${var.cantaloupe_s3_source_basiclookup_suffix}"
     cantaloupe_source_static                = "${var.cantaloupe_source_static}"
     cantaloupe_heapsize                     = "${var.cantaloupe_heapsize}"
-    manifeststore_listening_port            = "${var.manifeststore_listening_port}"
-    manifeststore_s3_access_key             = "${var.manifeststore_s3_access_key}"
-    manifeststore_s3_secret_key             = "${var.manifeststore_s3_secret_key}"
-    manifeststore_s3_region                 = "${var.manifeststore_s3_region}"
-    manifeststore_s3_bucket                 = "${var.manifeststore_s3_bucket}"
-    manifeststore_memory                    = "${var.manifeststore_memory}"
-    manifeststore_cpu                       = "${var.manifeststore_cpu}"
-    manifeststore_image_url                 = "${var.manifeststore_image_url}"
+    cantaloupe_cloudwatch_log_group         = "${var.cantaloupe_cloudwatch_log_group}"
+    cantaloupe_cloudwatch_region            = "${var.cantaloupe_cloudwatch_region}"
+    cantaloupe_cloudwatch_stream_prefix     = "${var.cantaloupe_cloudwatch_stream_prefix}"
+    fester_listening_port                   = "${var.fester_listening_port}"
+    fester_s3_access_key                    = "${var.fester_s3_access_key}"
+    fester_s3_secret_key                    = "${var.fester_s3_secret_key}"
+    fester_s3_region                        = "${var.fester_s3_region}"
+    fester_s3_bucket                        = "${var.fester_s3_bucket}"
+    fester_memory                           = "${var.fester_memory}"
+    fester_cpu                              = "${var.fester_cpu}"
+    fester_image_url                        = "${local.fester_docker_image_url}"
+    fester_iiif_base_url                    = "${var.fester_iiif_base_url}"
+    fester_cloudwatch_log_group             = "${var.fester_cloudwatch_log_group}"
+    fester_cloudwatch_region                = "${var.fester_cloudwatch_region}"
+    fester_cloudwatch_stream_prefix         = "${var.fester_cloudwatch_stream_prefix}"
   }
 }
 
