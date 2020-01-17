@@ -5,6 +5,14 @@
     "memory": ${cantaloupe_memory},
     "image": "${cantaloupe_image_url}",
     "networkMode": "awsvpc",
+    "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-group": "${cantaloupe_cloudwatch_log_group}",
+            "awslogs-region": "${cantaloupe_cloudwatch_region}",
+            "awslogs-stream-prefix": "${cantaloupe_cloudwatch_stream_prefix}"
+         }
+    },
     "portMappings": [
       {
         "containerPort": ${cantaloupe_listening_port},
@@ -39,6 +47,14 @@
     "memory": ${fester_memory},
     "image": "${fester_image_url}",
     "networkMode": "awsvpc",
+    "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-group": "${fester_cloudwatch_log_group}",
+            "awslogs-region": "${fester_cloudwatch_region}",
+            "awslogs-stream-prefix": "${fester_cloudwatch_stream_prefix}"
+         }
+    },
     "portMappings": [
       {
         "containerPort": ${fester_listening_port},
@@ -50,7 +66,8 @@
       { "name" : "FESTER_S3_ACCESS_KEY", "value" : "${fester_s3_access_key}" },
       { "name" : "FESTER_S3_BUCKET", "value" : "${fester_s3_bucket}" },
       { "name" : "FESTER_S3_REGION", "value" : "${fester_s3_region}" },
-      { "name" : "FESTER_S3_SECRET_KEY", "value" : "${fester_s3_secret_key}" }
+      { "name" : "FESTER_S3_SECRET_KEY", "value" : "${fester_s3_secret_key}" },
+      { "name" : "IIIF_BASE_URL", "value" : "${fester_iiif_base_url}" }
     ]
   }
 ]

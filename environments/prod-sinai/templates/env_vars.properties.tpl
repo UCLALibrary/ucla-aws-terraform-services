@@ -5,6 +5,14 @@
     "memory": ${cantaloupe_memory},
     "image": "${cantaloupe_image_url}",
     "networkMode": "awsvpc",
+    "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-group": "${cantaloupe_cloudwatch_log_group}",
+            "awslogs-region": "${cantaloupe_cloudwatch_region}",
+            "awslogs-stream-prefix": "${cantaloupe_cloudwatch_stream_prefix}"
+         }
+    },
     "portMappings": [
       {
         "containerPort": ${cantaloupe_listening_port},
@@ -38,26 +46,6 @@
       { "name" : "CIPHER_TEXT", "value" : "${cipher_text}" },
       { "name" : "CIPHER_KEY", "value" : "${cipher_key}" },
       { "name" : "JAVA_HEAP_SIZE", "value" : "${cantaloupe_heapsize}" }
-    ]
-  },
-  {
-    "name": "${fargate_definition_name}-manifeststore",
-    "repositoryCredentials": { "credentialsParameter": "${registry_auth_arn}" },
-    "memory": ${manifeststore_memory},
-    "image": "${manifeststore_image_url}",
-    "networkMode": "awsvpc",
-    "portMappings": [
-      {
-        "containerPort": ${manifeststore_listening_port},
-        "hostPort": ${manifeststore_listening_port}
-      }
-    ],
-    "environment": [
-      { "name" : "HTTP_PORT", "value" : "${manifeststore_listening_port}" },
-      { "name" : "MANIFESTSTORE_S3_ACCESS_KEY", "value" : "${manifeststore_s3_access_key}" },
-      { "name" : "MANIFESTSTORE_S3_BUCKET", "value" : "${manifeststore_s3_bucket}" },
-      { "name" : "MANIFESTSTORE_S3_REGION", "value" : "${manifeststore_s3_region}" },
-      { "name" : "MANIFESTSTORE_S3_SECRET_KEY", "value" : "${manifeststore_s3_secret_key}" }
     ]
   }
 ]

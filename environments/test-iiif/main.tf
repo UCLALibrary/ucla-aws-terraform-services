@@ -69,6 +69,15 @@ module "cantaloupe_src_bucket" {
   force_destroy_flag = "${var.force_destroy_src_bucket}"
 }
 
+### Create a cantaloupe cache bucket
+module "cantaloupe_cache_bucket" {
+  source             = "git::https://github.com/UCLALibrary/aws_terraform_s3_module.git"
+  bucket_name        = "${var.cantaloupe_s3_cache_bucket}"
+  bucket_region      = "${var.region}"
+  force_destroy_flag = "${var.force_destroy_cache_bucket}"
+}
+
+
 ### Create a fester source bucket
 module "fester_bucket" {
   source             = "git::https://github.com/UCLALibrary/aws_terraform_s3_module.git"
@@ -141,6 +150,7 @@ module "alb" {
 
   vpc_subnet_ids = data.terraform_remote_state.vpc.outputs.vpc_public_subnet_ids
   alb_security_groups = ["${aws_security_group.allow_alb_web.id}"]
+  idle_timeout = "${var.lb_idle_timeout}"
 }
 
 
@@ -157,7 +167,7 @@ resource "aws_lb_target_group" "cantaloupe_tg" {
     port = "${var.cantaloupe_listening_port}"
     healthy_threshold = 5
     unhealthy_threshold = 2
-    timeout = 5
+    timeout =  10
     interval = 15
     matcher = "200"
   }
@@ -176,7 +186,7 @@ resource "aws_lb_target_group" "fester_tg" {
     port = "${var.fester_listening_port}"
     healthy_threshold = 5
     unhealthy_threshold = 2
-    timeout = 5
+    timeout = 10
     interval = 15
     matcher = "200"
   }
@@ -336,6 +346,9 @@ data "template_file" "fargate_iiif_definition" {
     cantaloupe_s3_source_basiclookup_suffix = "${var.cantaloupe_s3_source_basiclookup_suffix}"
     cantaloupe_source_static                = "${var.cantaloupe_source_static}"
     cantaloupe_heapsize                     = "${var.cantaloupe_heapsize}"
+    cantaloupe_cloudwatch_log_group         = "${var.cantaloupe_cloudwatch_log_group}"
+    cantaloupe_cloudwatch_region            = "${var.cantaloupe_cloudwatch_region}"
+    cantaloupe_cloudwatch_stream_prefix     = "${var.cantaloupe_cloudwatch_stream_prefix}"
     fester_listening_port                   = "${var.fester_listening_port}"
     fester_s3_access_key                    = "${var.fester_s3_access_key}"
     fester_s3_secret_key                    = "${var.fester_s3_secret_key}"
@@ -344,6 +357,10 @@ data "template_file" "fargate_iiif_definition" {
     fester_memory                           = "${var.fester_memory}"
     fester_cpu                              = "${var.fester_cpu}"
     fester_image_url                        = "${local.fester_docker_image_url}"
+    fester_iiif_base_url                    = "${var.fester_iiif_base_url}"
+    fester_cloudwatch_log_group             = "${var.fester_cloudwatch_log_group}"
+    fester_cloudwatch_region                = "${var.fester_cloudwatch_region}"
+    fester_cloudwatch_stream_prefix         = "${var.fester_cloudwatch_stream_prefix}"
   }
 }
 
