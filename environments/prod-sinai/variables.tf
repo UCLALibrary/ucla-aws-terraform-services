@@ -66,27 +66,28 @@ variable "cantaloupe_cloudwatch_region" { default = "us-west-2" }
 variable "cantaloupe_cloudwatch_stream_prefix" { default = "cantaloupe_" }
 
 ## KakaduConverter Variables
-variable kakadu_converter_s3_tiff_bucket {}
-variable kakadu_converter_s3_tiff_bucket_region { default = "us-west-2"}
-variable kakadu_converter_artifact {}
-variable kakadu_converter_app_name {}
-variable kakadu_converter_layers {}
-variable kakadu_converter_handler {}
-variable kakadu_converter_filter_suffix {}
-variable kakadu_converter_runtime {}
-variable kakadu_converter_memory_size { default = "1024"}
-variable kakadu_converter_timeout { default = "600" }
-variable kakadu_converter_environment_variables {
+variable "kakadu_converter_s3_tiff_bucket" {}
+variable "kakadu_converter_s3_tiff_bucket_region" { default = "us-west-2"}
+variable "kakadu_converter_artifact" {}
+variable "kakadu_converter_app_name" {}
+variable "kakadu_converter_layers" {}
+variable "kakadu_converter_handler" {}
+variable "kakadu_converter_filter_suffix" {}
+variable "kakadu_converter_runtime" {}
+variable "kakadu_converter_memory_size" { default = "1024"}
+variable "kakadu_converter_timeout" { default = "600" }
+variable "kakadu_converter_environment_variables" {
   type = "map"
   default = {
     hello = "world",
     hello2 = "world2"
   }
 }
-variable kakadu_converter_cloudwatch_permissions {}
-variable kakadu_converter_s3_permissions {}
-variable kakadu_converter_s3_buckets {}
-variable kakadu_converter_bucket_event {} 
+variable "kakadu_converter_cloudwatch_permissions" {}
+variable "kakadu_converter_s3_permissions" {}
+variable "kakadu_converter_s3_buckets" {}
+variable "kakadu_converter_bucket_event" {} 
+variable "kakadu_compression_rate" {}
 
 # CloudFront Settings
 variable iiif_alb_dns_name {}
