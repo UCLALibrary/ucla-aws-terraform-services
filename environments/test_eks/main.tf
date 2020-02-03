@@ -70,7 +70,7 @@ resource "aws_route_table_association" "eks_route_global_table" {
 
 resource "aws_key_pair" "deploy_key" {
   key_name         = "deploy-key"
-  public_key       = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDkwazJbdOiBSp3Ylz6X6ltkQ7HgmEU9fimotzrBWGohO7ss73bqPjWTR4nLPVGcuyLG51i937YSijvbG9QD1S7D4dN780+SB4UfX4cRKNYIw2XCGwfsWYHOGB8Gl/PRtPx8PA5DST4qy+dztPE2zVzAt6ChIw1jxSocdbJ9gd4IF7U6jK3ziywpFMhDfLs/vlx98Fm521xYWtefaT1+bb4a7/YdE++6KA/sbk6Dg3rzlfHHmpWJMromL/wHnIj/njBW2LlTIIkvJY+gLbVYQ3QDrbxbKa5iHaBTI7P6iRkJhkssE4VEpm/y79XD11EZd8E2GsAs2WjnTfynIN13Reh"
+  public_key       = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCqvxpnmmXqTwOwO4mQcHcHjFeL9fEa7R8Gohm5aR5ifSITz2IYS7AJ3vubWwRd3Xkbv/aDBibQ5LcKDxVGqK78NW5B6DeQ5iVWLAsbSK0ugFMW2iD5i8VGTzaEHNqIQcWFHP4yZP3QTON1P1jUqTtLP3Rq8VXQZCbwfIrF/ce9TR/dT1qOuYVNM7+0BKZ8xus6xttPQUgbw/miogyx6geSxDceTb/TIoFHIdNKcwmqZV1jLFJvb4nDKc6F8CS7lJpfJ58tnug3JbJWQmbwWw26cDdXnEKhNliizxA7yhI0g5tO7O1cRkR8wp+8V5hQUljRFoj18WuyZ6SdAYU3KiBf"
 }
 
 
@@ -138,27 +138,75 @@ data "aws_iam_policy_document" "eks_assume_policy_document" {
   }
 }
 
-data "template_file" "iam_policy_permissions_for_lambda" {
-  template = "${file("${path.module}/templates/iam_policy.json.tpl")}"
-  vars = {
-    s3_list_of_buckets = "${jsonencode(var.s3_iam_allowed_resources)}"
-    s3_permissions = "${jsonencode(var.s3_iam_allowed_actions)}"
-    cloudwatch_permissions = "${jsonencode(var.cloudwatch_iam_allowed_actions)}"
-  }
-}
-
 resource "aws_iam_role" "iam_for_eks" {
   name = "iam_for_eks"
-  assume_role_policy = "${data.aws_iam_policy_document.eks_assume_policy_document}"
+  assume_role_policy = "${data.aws_iam_policy_document.eks_assume_policy_document.json}"
 } 
+
+resource "aws_iam_role_policy_attachment" "eks_attach_service_policy" {
+  role = "${aws_iam_role.iam_for_eks.name}"
+  policy_arn = "${var.eks_iam_policy_attachment_service_arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "eks_attach_cluster_policy" {
+  role = "${aws_iam_role.iam_for_eks.name}"
+  policy_arn = "${var.eks_iam_policy_attachment_cluster_arn}"
+}
+
+resource "aws_iam_role" "iam_for_eks_node_group" {
+  name = "eks_node_group"
+
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+    Version = "2012-10-17"
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "iam_for_eks_node_group-AmazonEKSWorkerNodePolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  role       = aws_iam_role.iam_for_eks_node_group.name
+}
+
+resource "aws_iam_role_policy_attachment" "iam_for_eks_node_group-AmazonEKS_CNI_Policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = aws_iam_role.iam_for_eks_node_group.name
+}
+
+resource "aws_iam_role_policy_attachment" "iam_for_eks_node_group-AmazonEC2ContainerRegistryReadOnly" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  role       = aws_iam_role.iam_for_eks_node_group.name
+}
 
 resource "aws_eks_cluster" "eks_cluster" {
   name = "eks_cluster"
-  role_arn = "${var.aws_iam_role.iam_for_eks.role_arn}"
+  role_arn = "${aws_iam_role.iam_for_eks.arn}"
   
   vpc_config {
-    subnet_ids = [
-      toset(aws_subnets.eks_subnets.*.id)
-    ]
+    subnet_ids = "${aws_subnet.eks_subnets[*].id}"
   }
+}
+
+resource "aws_eks_node_group" "eks_node_group" {
+  cluster_name = "${aws_eks_cluster.eks_cluster.name}"
+  node_group_name = "eks_node_group"
+  node_role_arn = "${aws_iam_role.iam_for_eks_node_group.arn}"
+  subnet_ids = "${aws_subnet.eks_subnets[*].id}"
+
+  scaling_config {
+    desired_size = "${var.node_desired_size}"
+    max_size = "${var.node_max_size}"
+    min_size = "${var.node_min_size}"
+  }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.iam_for_eks_node_group-AmazonEC2ContainerRegistryReadOnly,
+    aws_iam_role_policy_attachment.iam_for_eks_node_group-AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.iam_for_eks_node_group-AmazonEKSWorkerNodePolicy
+  ]
 }
