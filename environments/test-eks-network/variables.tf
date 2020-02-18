@@ -3,7 +3,7 @@ variable "cred_file" {
 }
 
 variable "cred_profile" {
-  default = "cachemeoutside"
+  default = "default"
 }
 
 variable "region" {
