@@ -1,7 +1,3 @@
-variable "cred_file" {
-  default = "~/.aws/credentials/"
-}
-
 variable "cred_profile" {
   default = "default"
 }

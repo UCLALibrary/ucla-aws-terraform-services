@@ -1,9 +1,9 @@
 terraform {
+  required_version = "~> 0.12.20"
   backend "remote" {}
 }
 
 provider "aws" {
-  shared_credentials_file   = var.cred_file
   profile                   = var.cred_profile
   region                    = var.region
 }
