@@ -18,7 +18,7 @@ provider "aws" {
 ##### 172.50.100.0/24 AZ 3
 ##### NAT Gateway to be created, but not forcing all egress traffic to use the NAT gateway
 module "eks_vpc" {
-  source                    = "git::https://github.com/UCLALibrary/aws_terraform_module_vpc.git?ref=IIIF-699-2"
+  source                    = "git::https://github.com/UCLALibrary/aws_terraform_module_vpc.git"
   vpc_cidr_block            = var.vpc_cidr_block
   public_subnet_count       = var.public_subnet_count
   public_subnet_init_value  = var.public_subnet_int
