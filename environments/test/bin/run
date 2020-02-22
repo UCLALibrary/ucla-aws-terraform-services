@@ -1,5 +1,7 @@
 ##!/bin/bash
 ## Configured to use https://apps.terraform.io
+### This script is expected to run at the root directory of this environment
+### E.G ucla-aws-terraform-services/environments/test
 
 ## Arguments
 ## $1 = Workspace to use
