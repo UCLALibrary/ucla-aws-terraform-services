@@ -30,6 +30,30 @@ module "eks_vpc" {
   default_tag_map           = var.default_tag_map
 }
 
+### Create route table to allow private networks to use IGW for egress, but use NAT gateway when accessing campus and/or specified IPs
+resource "aws_route_table" "nat_egress_known" {
+  vpc_id = module.eks_vpc.vpc_main_id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = module.eks_vpc.public_igw_id
+  }
+
+  route {
+    cidr_block = "164.67.40.0/24"
+    gateway_id = module.eks_vpc.private_nat_gateway_id
+  }
+
+  tags = var.default_tag_map
+}
+
+### Associate created route table to private subnets
+resource "aws_route_table_association" "associate_nat_egress_known" {
+  for_each = toset(module.eks_vpc.vpc_private_subnet_ids)
+  subnet_id = each.key
+  route_table_id = aws_route_table.nat_egress_known.id
+}
+
 module "default_sg_egress" {
   source                    = "git::https://github.com/UCLALibrary/aws_terraform_module_security_group.git"
   sg_name                   = "test-eks-environment-egress_allowed"
