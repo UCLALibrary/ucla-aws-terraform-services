@@ -1,11 +1,12 @@
 #!/bin/bash
 
-TERRAFORM_VERSION="0.12.9"
+TERRAFORM_VERSION="0.12.20"
 TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
 TERRAFORM_BIN="${HOME}/terraform/bin"
 TERRAFORM="${TERRAFORM_BIN}/terraform"
 
-AWS_ENV=("test-iiif" "prod-iiif" "prod-network" "test-network" "prod-sinai" "stage-iiif")
+AWS_ENV=("test/eks-network" "test/eks-iam" "test-eks")
+export AWS_REGION="us-west-2"
 
 mkdir -p ${TERRAFORM_BIN}
 cd ${TERRAFORM_BIN}
