@@ -5,3 +5,6 @@
 *.jar
 *.hcl
 *crash.log
+*secrets.tfvars
+*deploy.plan
+.vscode

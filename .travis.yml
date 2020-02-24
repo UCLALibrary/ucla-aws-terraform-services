@@ -6,10 +6,14 @@ branches:
 
 jobs:
   include:
-    - stage: Run Terraform Validate
+    - stage: Run Terraform Validate version 0.12.9
       name: Install Terraform and validate environments
       language: bash
       script: .travis/terraform-validate.sh
+    - stage: Run Terraform Validate version 0.12.20
+      name: Install Terraform and validate environments
+      language: bash
+      script: .travis/terraform-validate-0.12.20.sh
 
 notifications:
   email:

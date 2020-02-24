@@ -1,0 +1,8 @@
+# Documentation found here: https://www.terraform.io/docs/backends/types/remote.html
+workspaces {
+  name       = "replace_workspacename"
+}
+
+hostname     = "app.terraform.io"
+organization = "replace_organization"
+token        = "replace_token"

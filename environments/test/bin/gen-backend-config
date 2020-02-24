@@ -1,0 +1,41 @@
+#!/bin/bash
+### Configured to use https://apps.terraform.io
+### This script is expected to run at the root directory of this environment.
+### E.G ucla-aws-terraform-services/environments/test/
+
+### Arguments
+### $1 = Workspace to use
+
+TERRAFORM_ENV="test"
+WORKSPACES=("eks-network" "eks" "eks-iam")
+TEMPLATE_LOCATION="bin/templates/backend.hcl.template"
+DEST_LOCATION="$1/backend.hcl"
+
+### Check if argument passed is a valid workspace within the defined workspace array
+for WS in "${WORKSPACES[@]}"
+do
+  if [[ "$WS" == "$1" ]] ; then
+    TERRAFORM_WORKSPACE_NAME="${TERRAFORM_ENV}-$1"
+    break
+  fi
+done
+
+### Throw an error if this is an invalid workspace
+if [[ ${TERRAFORM_WORKSPACE_NAME} == "" ]] ; then
+  echo "Please specify a valid workspace. The following workspaces are available:"
+  for WS in "${WORKSPACES[@]}"
+  do
+    echo "${WS}"
+  done
+  exit 1
+fi
+
+echo "Please enter the following information to set up your backend.hcl file. You will need access to https://apps.terraform.io to obtain this information."
+read -p "Terraform Cloud Organization Name: " TERRAFORM_ORG_NAME
+read -p "Terraform Cloud Token: " TERRAFORM_TOKEN
+
+cp -rp $TEMPLATE_LOCATION $DEST_LOCATION
+sed -i "s/replace_workspacename/${TERRAFORM_WORKSPACE_NAME}/g" $DEST_LOCATION
+sed -i "s/replace_organization/${TERRAFORM_ORG_NAME}/g" $DEST_LOCATION
+sed -i "s/replace_token/${TERRAFORM_TOKEN}/g" $DEST_LOCATION
+
