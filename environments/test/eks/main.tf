@@ -36,7 +36,7 @@ provider "aws" {
 }
 
 resource "aws_eks_cluster" "eks_cluster" {
-  name = "eks_cluster"
+  name = "test-eks-cluster"
   role_arn = data.terraform_remote_state.iam.outputs.eks_role_arn
   
   vpc_config {
