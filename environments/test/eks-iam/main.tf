@@ -64,13 +64,3 @@ resource "aws_iam_role_policy_attachment" "iam_for_eks_node_group-AmazonEC2Conta
   role       = aws_iam_role.iam_for_eks_node_group.name
 }
 
-resource "aws_iam_policy" "alb_ingress_policy" {
-  name = "Test-EKS-ALBIngressController"
-  policy = file("policies/ALBIngressController.json")
-}
-
-resource "aws_iam_role_policy_attachment" "iam_for_alb_ingress" {
-  policy_arn = aws_iam_policy.alb_ingress_policy.arn
-  role = aws_iam_role.iam_for_eks.name
-}
-
