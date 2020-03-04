@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "cantaloupe-deployment"
+  namespace: "test-iiif"
+spec:
+  selector:
+    matchLabels:
+      app: "cantaloupe"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: "cantaloupe"
+    spec:
+      containers:
+      - name: cantaloupe
+        image: uclalibrary/cantaloupe-ucla:4.1.4
+        ports:
+        - containerPort: 8182
+      imagePullSecrets:
+      - name: services-dockerhub-creds
