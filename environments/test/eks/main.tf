@@ -29,19 +29,29 @@ data "terraform_remote_state" "iam" {
   }
 }
 
-
 provider "aws" {
   profile          = var.aws_profile
   region           = var.aws_region
 }
 
 resource "aws_eks_cluster" "eks_cluster" {
-  name = "eks_cluster"
+  name = "test-eks-cluster"
   role_arn = data.terraform_remote_state.iam.outputs.eks_role_arn
   
   vpc_config {
     subnet_ids = data.terraform_remote_state.vpc.outputs.vpc_private_subnet_ids
   }
+}
+
+# This data requires OpenSSL and tac installed on the runner
+data "external" "eks_oidc_thumbprint" {
+  program = ["bash", "./helpers/oidc-thumbprint.sh", var.aws_region]
+}
+
+resource "aws_iam_openid_connect_provider" "eks_openid_connect" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.external.eks_oidc_thumbprint.result.thumbprint]
+  url             = aws_eks_cluster.eks_cluster.identity.0.oidc.0.issuer
 }
 
 resource "aws_eks_node_group" "gp_eks_nodegroup" {
@@ -55,5 +65,20 @@ resource "aws_eks_node_group" "gp_eks_nodegroup" {
     max_size = var.node_max_size
     min_size = var.node_min_size
   }
+}
+
+resource "aws_iam_policy" "alb_ingress_policy" {
+  name = "Test-EKS-ALBIngressController"
+  policy = file("policies/ALBIngressController.json")
+}
+
+resource "aws_iam_role" "alb_ingress_role" {
+  name = "TestALBIngressRole"
+  assume_role_policy =  templatefile("policies/oidc_assume_role_policy.json.template", { OIDC_ARN = aws_iam_openid_connect_provider.eks_openid_connect.arn, OIDC_URL = replace(aws_iam_openid_connect_provider.eks_openid_connect.url, "https://", ""), NAMESPACE = "kube-system", SA_NAME = "alb-ingress-controller" })
+}
+
+resource "aws_iam_role_policy_attachment" "iam_attach_alb_ingress" {
+  policy_arn = aws_iam_policy.alb_ingress_policy.arn
+  role       = aws_iam_role.alb_ingress_role.name
 }
 

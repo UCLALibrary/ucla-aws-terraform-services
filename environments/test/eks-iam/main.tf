@@ -20,7 +20,7 @@ data "aws_iam_policy_document" "eks_assume_policy_document" {
 }
 
 resource "aws_iam_role" "iam_for_eks" {
-  name = "terraform_eks_test-eks"
+  name = "test-eks"
   assume_role_policy = data.aws_iam_policy_document.eks_assume_policy_document.json
 } 
 
@@ -35,7 +35,7 @@ resource "aws_iam_role_policy_attachment" "eks_attach_cluster_policy" {
 }
 
 resource "aws_iam_role" "iam_for_eks_node_group" {
-  name = "terraform_nodegroup_test-eks"
+  name = "nodegroup_test-eks"
 
   assume_role_policy = jsonencode({
     Statement = [{
