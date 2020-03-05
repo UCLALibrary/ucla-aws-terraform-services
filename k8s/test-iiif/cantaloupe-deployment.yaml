@@ -13,10 +13,65 @@ spec:
       labels:
         app: "cantaloupe"
     spec:
+      imagePullSecrets:
+      - name: "services-dockerhub-creds"
       containers:
-      - name: cantaloupe
-        image: uclalibrary/cantaloupe-ucla:4.1.4
+      - name: "cantaloupe"
+        image: "uclalibrary/cantaloupe-ucla:4.1.4"
+        imagePullPolicy: "Always"
         ports:
         - containerPort: 8182
-      imagePullSecrets:
-      - name: services-dockerhub-creds
+        env:
+        - name: CANTALOUPE_ENDPOINT_ADMIN_ENABLED
+          value: "true"
+        - name: CANTALOUPE_ENDPOINT_ADMIN_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: cantaloupe-secrets
+              key: ADMIN_ENDPOINT_AUTH
+        - name: CANTALOUPE_CACHE_SERVER_DERIVATIVE_ENABLED
+          value: "true"
+        - name: CANTALOUPE_CACHE_SERVER_DERIVATIVE
+          value: "S3Cache"
+        - name: CANTALOUPE_CACHE_SERVER_DERIVATIVE_TTL_SECONDS
+          value: "0"
+        - name: CANTALOUPE_CACHE_SERVER_PURGE_MISSING
+          value: "true"
+        - name: CANTALOUPE_PROCESSOR_SELECTION_STRATEGY
+          value: "ManualSelectionStrategy"
+        - name: CANTALOUPE_MANUAL_PROCESSOR_JP2
+          value: "KakaduNativeProcessor"
+        - name: CANTALOUPE_S3CACHE_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: cantaloupe-secrets
+              key: S3_CANTALOUPE_ACCESS_KEY
+        - name: CANTALOUPE_S3CACHE_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cantaloupe-secrets
+              key: S3_CANTALOUPE_SECRET_KEY
+        - name: CANTALOUPE_S3CACHE_ENDPOINT
+          value: "s3.us-west-2.amazonaws.com"
+        - name: CANTALOUPE_S3CACHE_BUCKET_NAME
+          value: "test-iiif-cantaloupe-cache"
+        - name: CANTALOUPE_S3SOURCE_BUCKET_NAME
+          value: "test-iiif-cantaloupe-source"
+        - name: CANTALOUPE_S3SOURCE_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: cantaloupe-secrets
+              key: S3_CANTALOUPE_ACCESS_KEY
+        - name: CANTALOUPE_S3SOURCE_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cantaloupe-secrets
+              key: S3_CANTALOUPE_SECRET_KEY
+        - name: CANTALOUPE_S3SOURCE_ENDPOINT
+          value: "s3.us-west-2.amazonaws.com"
+        - name: CANTALOUPE_S3SOURCE_BASICLOOKUPSTRATEGY_PATH_SUFFIX
+          value: ".jpx"
+        - name: CANTALOUPE_SOURCE_STATIC
+          value: "S3Source"
+        - name: JAVA_HEAP_SIZE
+          value: "4g"
