@@ -45,12 +45,12 @@ spec:
           valueFrom:
             secretKeyRef:
               name: cantaloupe-secrets
-              key: S3_CANTALOUPE_ACCESS_KEY
+              key: CANTALOUPE_S3_ACCESS_KEY
         - name: CANTALOUPE_S3CACHE_SECRET_KEY
           valueFrom:
             secretKeyRef:
               name: cantaloupe-secrets
-              key: S3_CANTALOUPE_SECRET_KEY
+              key: CANTALOUPE_S3_SECRET_KEY
         - name: CANTALOUPE_S3CACHE_ENDPOINT
           value: "s3.us-west-2.amazonaws.com"
         - name: CANTALOUPE_S3CACHE_BUCKET_NAME
@@ -61,12 +61,12 @@ spec:
           valueFrom:
             secretKeyRef:
               name: cantaloupe-secrets
-              key: S3_CANTALOUPE_ACCESS_KEY
+              key: CANTALOUPE_S3_ACCESS_KEY
         - name: CANTALOUPE_S3SOURCE_SECRET_KEY
           valueFrom:
             secretKeyRef:
               name: cantaloupe-secrets
-              key: S3_CANTALOUPE_SECRET_KEY
+              key: CANTALOUPE_S3_SECRET_KEY
         - name: CANTALOUPE_S3SOURCE_ENDPOINT
           value: "s3.us-west-2.amazonaws.com"
         - name: CANTALOUPE_S3SOURCE_BASICLOOKUPSTRATEGY_PATH_SUFFIX
