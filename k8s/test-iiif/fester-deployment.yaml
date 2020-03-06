@@ -16,7 +16,7 @@ spec:
       imagePullSecrets:
       - name: "services-dockerhub-creds"
       containers:
-      - name: "cantaloupe"
+      - name: "fester"
         image: "uclalibrary/fester:latest"
         imagePullPolicy: "Always"
         ports:
