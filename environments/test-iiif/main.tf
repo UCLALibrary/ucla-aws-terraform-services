@@ -199,17 +199,104 @@ resource "aws_lb_listener" "iiif_http_listener" {
   protocol          = "HTTP"
 
   default_action {
-    type             = "redirect"
-
-    redirect {
-      port = "443"
-      protocol = "HTTPS"
-      status_code = "HTTP_301"    
-    }
+    target_group_arn = "${aws_lb_target_group.cantaloupe_tg.arn}"
+    type             = "forward"
   }
 
   depends_on = ["module.alb"]
 }
+
+resource "aws_lb_listener_rule" "http_fester_docs_root" {
+  listener_arn = "${aws_lb_listener.iiif_http_listener.arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.fester_tg.arn}"
+  }
+
+  condition {
+    path_pattern {
+      values = ["/docs/fester"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "http_fester_docs_subpath" {
+  listener_arn = "${aws_lb_listener.iiif_http_listener.arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.fester_tg.arn}"
+  }
+
+  condition {
+    path_pattern {
+      values = ["/docs/fester/*"]
+    }
+  }
+}
+
+
+resource "aws_lb_listener_rule" "fester_fester_healthcheck" {
+  listener_arn = "${aws_lb_listener.iiif_http_listener.arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.fester_tg.arn}"
+  }
+
+  condition {
+    path_pattern {
+      values = ["/status/fester"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "http_fester_collections_root" {
+  listener_arn = "${aws_lb_listener.iiif_http_listener.arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.fester_tg.arn}"
+  }
+
+  condition {
+    path_pattern {
+      values = ["/collections"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "http_fester_collections_subpath" {
+  listener_arn = "${aws_lb_listener.iiif_http_listener.arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.fester_tg.arn}"
+  }
+
+  condition {
+    path_pattern {
+      values = ["/collections/*"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "http_fester_manifest" {
+  listener_arn = "${aws_lb_listener.iiif_http_listener.arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.fester_tg.arn}"
+  }
+
+  condition {
+    path_pattern {
+      values = ["/*/manifest"]
+    }
+  }
+}
+
 
 ### Create a listener to answer on HTTPS and set the default route to Cantaloupe's target group
 resource "aws_lb_listener" "iiif_https_listener" {
@@ -242,7 +329,7 @@ resource "aws_lb_listener_rule" "fester_docs_root" {
   }
 }
 
-resource "aws_lb_listener_rule" "fester_docs_subpath" {
+resource "aws_lb_listener_rule" "https_fester_docs_subpath" {
   listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
 
   action {
@@ -258,7 +345,7 @@ resource "aws_lb_listener_rule" "fester_docs_subpath" {
 }
 
 
-resource "aws_lb_listener_rule" "fester_healthcheck" {
+resource "aws_lb_listener_rule" "https_fester_healthcheck" {
   listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
 
   action {
@@ -273,7 +360,7 @@ resource "aws_lb_listener_rule" "fester_healthcheck" {
   }
 }
 
-resource "aws_lb_listener_rule" "fester_collections_root" {
+resource "aws_lb_listener_rule" "https_fester_collections_root" {
   listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
 
   action {
@@ -288,7 +375,7 @@ resource "aws_lb_listener_rule" "fester_collections_root" {
   }
 }
 
-resource "aws_lb_listener_rule" "fester_collections_subpath" {
+resource "aws_lb_listener_rule" "https_fester_collections_subpath" {
   listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
 
   action {
@@ -303,7 +390,7 @@ resource "aws_lb_listener_rule" "fester_collections_subpath" {
   }
 }
 
-resource "aws_lb_listener_rule" "fester_manifest" {
+resource "aws_lb_listener_rule" "https_fester_manifest" {
   listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
 
   action {
