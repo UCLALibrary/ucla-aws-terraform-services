@@ -236,7 +236,6 @@ resource "aws_lb_listener_rule" "http_fester_path" {
   }
 }
 
-
 resource "aws_lb_listener_rule" "fester_fester_healthcheck" {
   listener_arn = "${aws_lb_listener.iiif_http_listener.arn}"
 
