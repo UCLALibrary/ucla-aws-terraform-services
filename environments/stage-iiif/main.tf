@@ -196,7 +196,7 @@ resource "aws_lb_listener" "iiif_http_listener" {
   depends_on = ["module.alb"]
 }
 
-resource "aws_lb_listener_rule" "http_fester_docs_root" {
+resource "aws_lb_listener_rule" "http_fester_path_root" {
   listener_arn = "${aws_lb_listener.iiif_http_listener.arn}"
 
   action {
@@ -206,12 +206,12 @@ resource "aws_lb_listener_rule" "http_fester_docs_root" {
 
   condition {
     path_pattern {
-      values = ["/docs/fester"]
+      values = ["/fester"]
     }
   }
 }
 
-resource "aws_lb_listener_rule" "http_fester_docs_subpath" {
+resource "aws_lb_listener_rule" "http_fester_path" {
   listener_arn = "${aws_lb_listener.iiif_http_listener.arn}"
 
   action {
@@ -221,7 +221,7 @@ resource "aws_lb_listener_rule" "http_fester_docs_subpath" {
 
   condition {
     path_pattern {
-      values = ["/docs/fester/*"]
+      values = ["/fester/*"]
     }
   }
 }
@@ -304,7 +304,7 @@ resource "aws_lb_listener" "iiif_https_listener" {
   depends_on = ["module.alb"]
 }
 
-resource "aws_lb_listener_rule" "https_fester_docs_root" {
+resource "aws_lb_listener_rule" "https_fester_path_root" {
   listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
 
   action {
@@ -314,12 +314,12 @@ resource "aws_lb_listener_rule" "https_fester_docs_root" {
 
   condition {
     path_pattern {
-      values = ["/docs/fester"]
+      values = ["/fester"]
     }
   }
 }
 
-resource "aws_lb_listener_rule" "https_fester_docs_subpath" {
+resource "aws_lb_listener_rule" "https_fester_path" {
   listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
 
   action {
@@ -329,7 +329,7 @@ resource "aws_lb_listener_rule" "https_fester_docs_subpath" {
 
   condition {
     path_pattern {
-      values = ["/docs/fester/*"]
+      values = ["/fester/*"]
     }
   }
 }
