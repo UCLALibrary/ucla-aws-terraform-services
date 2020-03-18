@@ -20,7 +20,7 @@ spec:
           backend:
             serviceName: fester-service
             servicePort: 8183
-        - path: /fester/docs
+        - path: /fester/*
           backend:
             serviceName: fester-service
             servicePort: 8183
