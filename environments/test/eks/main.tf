@@ -59,6 +59,7 @@ resource "aws_eks_node_group" "gp_eks_nodegroup" {
   node_group_name = "gp-test-eks"
   node_role_arn = data.terraform_remote_state.iam.outputs.eks_nodegroup_role_arn
   subnet_ids = data.terraform_remote_state.vpc.outputs.vpc_private_subnet_ids
+  instance_types = ["m5.large"]
 
   scaling_config {
     desired_size = var.node_desired_size
