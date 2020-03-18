@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: "test-iiif-ingress"
+  namespace: "test-iiif"
+  annotations:
+#    ingress.kubernetes.io/rewrite-target: /
+#    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+#    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+        - path: /
+          backend:
+            serviceName: cantaloupe-service
+            servicePort: 8182
+        - path: /docs/fester
+          backend:
+            serviceName: fester-service
+            servicePort: 8183
+        - path: /fester/docs
+          backend:
+            serviceName: fester-service
+            servicePort: 8183
+        - path: /collections
+          backend:
+            serviceName: fester-service
+            servicePort: 8183
+        - path: /collections/*
+          backend:
+            serviceName: fester-service
+            servicePort: 8183
+        - path: /status/fester
+          backend:
+            serviceName: fester-service
+            servicePort: 8183
+        - path: /*/manifest
+          backend:
+            serviceName: fester-service
+            servicePort: 8183
