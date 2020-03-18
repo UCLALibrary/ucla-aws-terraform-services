@@ -206,6 +206,21 @@ resource "aws_lb_listener" "iiif_http_listener" {
   depends_on = ["module.alb"]
 }
 
+resource "aws_lb_listener_rule" "http_fester_path_root" {
+  listener_arn = "${aws_lb_listener.iiif_http_listener.arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.fester_tg.arn}"
+  }
+
+  condition {
+    path_pattern {
+      values = ["/fester"]
+    }
+  }
+}
+
 resource "aws_lb_listener_rule" "http_fester_path" {
   listener_arn = "${aws_lb_listener.iiif_http_listener.arn}"
 
@@ -298,6 +313,22 @@ resource "aws_lb_listener" "iiif_https_listener" {
 
   depends_on = ["module.alb"]
 }
+
+resource "aws_lb_listener_rule" "https_fester_path_root" {
+  listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.fester_tg.arn}"
+  }
+
+  condition {
+    path_pattern {
+      values = ["/fester"]
+    }
+  }
+}
+
 
 resource "aws_lb_listener_rule" "https_fester_path" {
   listener_arn = "${aws_lb_listener.iiif_https_listener.arn}"
