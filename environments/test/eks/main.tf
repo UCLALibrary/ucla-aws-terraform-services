@@ -35,8 +35,9 @@ provider "aws" {
 }
 
 resource "aws_eks_cluster" "eks_cluster" {
-  name = "test-eks-cluster"
+  name = "test-iiif-cluster"
   role_arn = data.terraform_remote_state.iam.outputs.eks_role_arn
+  version = var.eks_version
   
   vpc_config {
     subnet_ids = data.terraform_remote_state.vpc.outputs.vpc_private_subnet_ids
@@ -56,7 +57,7 @@ resource "aws_iam_openid_connect_provider" "eks_openid_connect" {
 
 resource "aws_eks_node_group" "gp_eks_nodegroup" {
   cluster_name = aws_eks_cluster.eks_cluster.name
-  node_group_name = "gp-test-eks"
+  node_group_name = "gp-test-iiif"
   node_role_arn = data.terraform_remote_state.iam.outputs.eks_nodegroup_role_arn
   subnet_ids = data.terraform_remote_state.vpc.outputs.vpc_private_subnet_ids
   instance_types = ["m5.large"]
