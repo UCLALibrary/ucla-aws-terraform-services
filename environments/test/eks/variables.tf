@@ -27,3 +27,7 @@ variable "node_min_size" {
   default = 1
 }
 
+variable "eks_version" {
+  default = 1.15
+}
+
