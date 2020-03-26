@@ -4,24 +4,24 @@ metadata:
   name: "test-iiif-ingress"
   namespace: "test-iiif"
   annotations:
-    nginx.ingress.kubernetes.io/default-backend: cantaloupe-service
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/enable-cors: "true"
-#    kubernetes.io/ingress.class: nginx
-#    nginx.ingress.kubernetes.io/default-backend: cantaloupe-service
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
+  tls:
+    - hosts:
+      - test-iiif.library.ucla.edu
+      secretName: test-iiif-tls
   rules:
-  - http:
+  - host: test-iiif.library.ucla.edu
+    http:
       paths:
-        - path: /fester/.*
+        - path: /fester[\/]?.*
           backend:
             serviceName: fester-service
             servicePort: 8183
-        - path: /collections
-          backend:
-            serviceName: fester-service
-            servicePort: 8183
-        - path: /collections/.*
+        - path: /collections[\/]?.*
           backend:
             serviceName: fester-service
             servicePort: 8183
