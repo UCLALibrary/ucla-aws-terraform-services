@@ -18,7 +18,11 @@ output "allow_ssh_ingress_id" {
   value = "${module.allow_ssh_ingress.id}"
 }
 
-output "allow_http_https_ingress_id" {
-  value = "${module.allow_http_https_ingress.id}"
+output "allow_http_https_uclavpn_id" {
+  value = "${module.allow_http_https_uclavpn.id}"
+}
+
+output "allow_http_https_librarynetworks_id" {
+  value = "${module.allow_http_https_librarynetworks.id}"
 }
 

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "fester-deployment"
+  namespace: "test-ingest-iiif"
+spec:
+  selector:
+    matchLabels:
+      app: "fester"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: "fester"
+    spec:
+      imagePullSecrets:
+      - name: "services-dockerhub-creds"
+      containers:
+      - name: "fester"
+        image: "uclalibrary/fester:latest"
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 8183
+        env:
+        - name: FESTER_HTTP_PORT
+          value: "8183"
+        - name: FESTER_S3_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: fester-secrets
+              key: FESTER_S3_ACCESS_KEY
+        - name: FESTER_S3_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: fester-secrets
+              key: FESTER_S3_SECRET_KEY
+        - name: FESTER_S3_BUCKET
+          value: "test-iiif-fester-source"
+        - name: FESTER_S3_REGION
+          value: "us-west-2"
+        - name: IIIF_BASE_URL
+          value: "https://test-iiif.library.ucla.edu/iiif/2"
