@@ -3,7 +3,7 @@ phases:
   install:
     commands:
       - echo test
-      - apk add --update curl py-pip
+      - apk add --update curl py-pip jq
       - pip install awscli
   build:
     commands:
@@ -13,7 +13,7 @@ phases:
 #      - kubectl version
       - aws --version
       - aws sts get-caller-identity
-      - aws eks update-kubeconfig --name test-iiif-cluster --region us-west-2
+      - aws eks update-kubeconfig --name test-iiif-cluster --region us-west-2 --role-arn $(aws sts get-caller-identity | jq -r '.Arn')
       - terraform version
       - kubectl version
       - cat ~/.kube/config
