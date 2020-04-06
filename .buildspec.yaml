@@ -12,6 +12,7 @@ phases:
       - export PATH=$PWD/:$PATH
 #      - kubectl version
       - aws --version
+      - aws sts get-caller-identity
       - aws eks update-kubeconfig --name test-iiif-cluster --region us-west-2
       - terraform version
       - kubectl version
