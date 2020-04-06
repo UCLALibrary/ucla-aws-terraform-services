@@ -13,7 +13,8 @@ phases:
 #      - kubectl version
       - aws --version
       - aws sts get-caller-identity
-      - aws eks update-kubeconfig --name test-iiif-cluster --region us-west-2 --role-arn $(aws sts get-caller-identity | jq -r '.Arn')
+      - aws eks update-kubeconfig --name test-iiif-cluster --region us-west-2 --role-arn arn:aws:iam::053298376377:role/avtest
+      - cat ~/.kube/config
       - terraform version
       - kubectl version
       - cat ~/.kube/config
