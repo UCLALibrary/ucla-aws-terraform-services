@@ -12,5 +12,7 @@ phases:
       - export PATH=$PWD/:$PATH
 #      - kubectl version
       - aws --version
-#      - aws eks update-kubeconfig --name $EKS_CLUSTER_NAME
+      - aws eks update-kubeconfig --name test-iiif-cluster
+      - kubectl version
+      - cat ~/.kube/config
 #      - kubectl -n $NAMESPACE get deployments
