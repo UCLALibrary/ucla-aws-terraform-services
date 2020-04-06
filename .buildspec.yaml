@@ -13,6 +13,7 @@ phases:
 #      - kubectl version
       - aws --version
       - aws eks update-kubeconfig --name test-iiif-cluster --region us-west-2
-      - kubectl version
+      - terraform version
+#      - kubectl version
       - cat ~/.kube/config
 #      - kubectl -n $NAMESPACE get deployments
