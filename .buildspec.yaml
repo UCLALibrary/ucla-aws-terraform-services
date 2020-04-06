@@ -1,10 +1,9 @@
 version: 0.2
 phases:
   install:
-    runtime-versions:
-      docker: 18
     commands:
       - echo test
+      - apk add --update curl
   build:
     commands:
       - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/kubectl
