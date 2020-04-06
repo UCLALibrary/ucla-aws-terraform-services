@@ -3,12 +3,12 @@ phases:
   install:
     commands:
       - echo test
-      - apk add --update curl
+      - apk add --update curl aws-cli
   build:
     commands:
       - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/kubectl
       - chmod +x ./kubectl
       - export PATH=$PWD/:$PATH
-      - kubectl -v
+      - kubectl version
 #      - aws eks update-kubeconfig --name $EKS_CLUSTER_NAME
 #      - kubectl -n $NAMESPACE get deployments
