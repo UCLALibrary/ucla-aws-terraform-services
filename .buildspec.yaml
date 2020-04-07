@@ -10,12 +10,11 @@ phases:
       - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/kubectl
       - chmod +x ./kubectl
       - export PATH=$PWD/:$PATH
-#      - kubectl version
       - aws --version
       - aws sts get-caller-identity
       - aws eks update-kubeconfig --name test-iiif-cluster --region us-west-2 --role-arn arn:aws:iam::053298376377:role/avtest
-      - cat ~/.kube/config
       - terraform version
       - kubectl version
-      - cat ~/.kube/config
+      - kubectl get deployments --all-namespaces
+      - kubectl rollout restart deployments/cantaloupe-deployment
 #      - kubectl -n $NAMESPACE get deployments
