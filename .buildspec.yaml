@@ -16,5 +16,6 @@ phases:
       - terraform version
       - kubectl version
       - kubectl get deployments --all-namespaces
-      - kubectl rollout restart deployment/cantaloupe-deployment
+      - kubectl -n test-iiif rollout restart deployment/cantaloupe-deployment
+      - kubectl -n test-iiif rollout status deployment/cantaloupe-deployment
 #      - kubectl -n $NAMESPACE get deployments
