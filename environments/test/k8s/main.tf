@@ -13,7 +13,7 @@ resource "kubernetes_deployment" "cantaloupe" {
     replicas = var.cantaloupe_deployment_replicas
 
     selector {
-      match_labels = cantaloupe_deployment_labels
+      match_labels = var.cantaloupe_deployment_labels
     }
 
     template {
@@ -22,13 +22,17 @@ resource "kubernetes_deployment" "cantaloupe" {
       }
 
       spec {
+        image_pull_secrets {
+          name = var.cantaloupe_deployment_image_pull_secrets
+        }
+
         container {
           image = var.cantaloupe_deployment_container_image
           name  = var.cantaloupe_deployment_container_name
           image_pull_policy = var.cantaloupe_deployment_container_image_pull_policy
 
           port {
-            containerPort = var.cantaloupe_deployment_container_port
+            container_port = var.cantaloupe_deployment_container_port
           }
 
           liveness_probe {
