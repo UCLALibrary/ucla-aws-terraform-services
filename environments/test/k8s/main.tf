@@ -1,34 +1,46 @@
-terraform {
-  required_version = "~> 0.12.20"
-  backend "remote" {}
-}
-
 provider "kubernetes" {
-  load_config_file = "true"
+  load_config_file = var.load_kubeconfig
 }
 
-
-resource "kubernetes_deployment" "example" {
+resource "kubernetes_deployment" "cantaloupe" {
   metadata {
-    name = "AVTEST"
-    namespace = "test-iiif"
-      app = "AVTEST"
-    }
+    name = var.cantaloupe_deployment_name
+    namespace = var.cantaloupe_deployment_namespace
+    labels = var.cantaloupe_deployment_labels
   }
 
-  template {
-    metadata {
-      labels = {
-        test = "MyExampleApp"
-      }
+  spec {
+    replicas = var.cantaloupe_deployment_replicas
+
+    selector {
+      match_labels = cantaloupe_deployment_labels
     }
 
-    spec {
-      container {
-        image = "uclalibrary/cantaloupe-ucla:4.1.4"
-        name  = "AVTEST"
-        image_pull_secrets = "Always"
-        port = 8182
+    template {
+      metadata {
+        labels = var.cantaloupe_deployment_labels
+      }
+
+      spec {
+        container {
+          image = var.cantaloupe_deployment_container_image
+          name  = var.cantaloupe_deployment_container_name
+          image_pull_policy = var.cantaloupe_deployment_container_image_pull_policy
+
+          port {
+            containerPort = var.cantaloupe_deployment_container_port
+          }
+
+          liveness_probe {
+            http_get {
+              path = "/iiif/2"
+              port = var.cantaloupe_deployment_container_port
+            }
+
+            initial_delay_seconds = 3
+            period_seconds        = 3
+          }
+        }
       }
     }
   }
