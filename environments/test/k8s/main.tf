@@ -27,12 +27,21 @@ resource "kubernetes_deployment" "cantaloupe" {
         }
 
         container {
-          image = var.cantaloupe_deployment_container_image
+          image = local.cantaloupe_deployment_container_image_full_url
           name  = var.cantaloupe_deployment_container_name
           image_pull_policy = var.cantaloupe_deployment_container_image_pull_policy
 
           port {
             container_port = var.cantaloupe_deployment_container_port
+          }
+
+          dynamic "env" {
+            for_each = var.cantaloupe_deployment_container_env
+
+            content {
+              name = env.key
+              value = env.value
+            }
           }
 
           liveness_probe {
@@ -41,8 +50,16 @@ resource "kubernetes_deployment" "cantaloupe" {
               port = var.cantaloupe_deployment_container_port
             }
 
-            initial_delay_seconds = 3
-            period_seconds        = 3
+            initial_delay_seconds = 15
+            period_seconds        = 20
+          }
+
+          readiness_probe {
+            tcp_socket {
+              port = var.cantaloupe_deployment_container_port
+            }
+            initial_delay_seconds = 5
+            period_seconds        = 10
           }
         }
       }
