@@ -1,6 +1,5 @@
 terraform {
   required_version = "~> 0.12.20"
-#  backend "remote" {}
   backend "s3" {
     encrypt = true
     bucket = "prod-services-terraform-state"
