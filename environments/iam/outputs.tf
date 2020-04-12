@@ -15,9 +15,9 @@ output "shared_codebuild_robot_name" {
 }
 
 output "eks_shared_codebuild_robot_arn" {
-  value = "${aws_iam_role.shared_eks_codebuild_role.arn}"
+  value = "${aws_iam_role.eks_shared_codebuild_role.arn}"
 }
 
 output "eks_shared_codebuild_robot_name" {
-  value = "${aws_iam_role.shared_eks_codebuild_role.name}"
+  value = "${aws_iam_role.eks_shared_codebuild_role.name}"
 }
