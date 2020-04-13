@@ -6,6 +6,8 @@ env:
     K8S_DEPLOYMENT_APP: "cantaloupe"
     K8S_NAMESPACE: "test-iiif"
     K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG: "latest"
+  parameter-store:
+    K8S_DEPLOYMENT_ROBOT_ARN: "iiif.k8s.robot.role.arn"
 phases:
   install:
     commands:
@@ -17,7 +19,13 @@ phases:
       - chmod +x ./kubectl
       - export PATH=$PWD/:$PATH
       - aws --version
-      - aws eks update-kubeconfig --name test-iiif-cluster --region us-west-2 --role-arn arn:aws:iam::053298376377:role/ucla-terraform_iiif-k8s-deployment-robot
+      - |
+          if [ "${K8S_NAMESPACE}" = "prod-iiif" ] ; then
+            IIIF_CLUSTER="prod-iiif-cluster"
+          else
+            IIIF_CLUSTER="test-iiif-cluster"
+          fi
+          aws eks update-kubeconfig --name "${IIIF_CLUSTER}" --region us-west-2 --role-arn arn:aws:iam::053298376377:role/ucla-terraform_iiif-k8s-deployment-robot
       - terraform version
       - |
           TF_ENV_SUBPATH=$(echo "${K8S_NAMESPACE}" | cut -d '-' -f1)
