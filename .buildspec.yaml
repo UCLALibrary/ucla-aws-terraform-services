@@ -12,7 +12,7 @@ phases:
       - export PATH=$PWD/:$PATH
       - aws --version
       - aws sts get-caller-identity
-      - aws eks update-kubeconfig --name test-iiif-cluster --region us-west-2 --role-arn arn:aws:iam::053298376377:role/avtest
+      - aws eks update-kubeconfig --name test-iiif-cluster --region us-west-2 --role-arn arn:aws:iam::053298376377:role/ucla-terraform_eks_shared-codebuild
       - terraform version
       - kubectl version
       - kubectl get deployments --all-namespaces

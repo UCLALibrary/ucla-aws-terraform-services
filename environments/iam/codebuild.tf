@@ -28,7 +28,7 @@ resource "aws_iam_role" "eks_shared_codebuild_role" {
 
 # Attach default policy to shared EKS CodeBuild role
 resource "aws_iam_role_policy_attachment" "eks_attach_codebuild_default_policy" {
-  role = aws_iam_role.shared_codebuild_role.name
+  role = aws_iam_role.eks_shared_codebuild_role.name
   policy_arn = aws_iam_policy.codebuild_default_policy.arn
 }
 
