@@ -1,4 +1,4 @@
-resource "aws_codebuild_project" "k8s-deployment" {
+resource "aws_codebuild_project" "k8s_deployment" {
   name          = "iiif-k8s-deployment"
   description   = "CodeBuild job for orchestrating Kubernetes deployments on EKS"
   build_timeout = "5"
@@ -23,8 +23,11 @@ resource "aws_codebuild_project" "k8s-deployment" {
   }
 }
 
-#module "ssm_parameters" {
-#  source  = "app.terraform.io/UCLALibrary/ssmparameters/aws"
-#  version = "1.0.0"
-#  ssm_list = "${local.ssm_parameters_merged}"
-#}
+resource "aws_ssm_parameter" "k8s_parameters" {
+  for_each = local.iiif_k8s_ssm_parameters_merged
+
+  name        = each.key
+  description = each.value[0]
+  type        = each.value[1]
+  value       = each.value[2]
+}
