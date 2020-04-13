@@ -1,9 +1,11 @@
+---
 version: 0.2
+
 env:
   variables:
-    K8S_DEPLOYMENT_APP = "cantaloupe"
-    K8S_NAMESPACE = "test-iiif"
-    K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG = "latest"
+    K8S_DEPLOYMENT_APP: "cantaloupe"
+    K8S_NAMESPACE: "test-iiif"
+    K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG: "latest"
 phases:
   install:
     commands:
