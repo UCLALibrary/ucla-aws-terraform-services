@@ -17,14 +17,13 @@ phases:
       - chmod +x ./kubectl
       - export PATH=$PWD/:$PATH
       - aws --version
-      - aws sts get-caller-identity
       - aws eks update-kubeconfig --name test-iiif-cluster --region us-west-2 --role-arn arn:aws:iam::053298376377:role/ucla-terraform_iiif-k8s-deployment-robot
       - terraform version
       - |
-          TF_ENV_SUBPATH=$(echo "$K8S_NAMESPACE" | cut -d '-' -f1)
-          if [ "$K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG" = "latest" ] ; then
+          TF_ENV_SUBPATH=$(echo "${K8S_NAMESPACE}" | cut -d '-' -f1)
+          if [ "${K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG}" = "latest" ] ; then
             kubectl -n $K8S_NAMESPACE rollout restart deployment/$K8S_DEPLOYMENT_APP
           else
             cd environments/$TF_ENV_SUBPATH/k8s && terraform init
-            terraform apply --auto-approve -var-file=$TF_ENV_SUBPATH.tfvars
+            terraform apply --auto-approve -var-file=$TF_ENV_SUBPATH.tfvars -var "${K8S_DEPLOYMENT_APP}_deployment_container_image_version=${K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG}"
           fi
