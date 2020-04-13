@@ -2,6 +2,7 @@
 resource "aws_iam_role" "shared_codebuild_role" {
   name = "${var.prefix_tag}_shared-codebuild"
   assume_role_policy = file("policies/codebuild-service-trust.json")
+  path = "/service-role/"
 }
 
 
@@ -22,8 +23,9 @@ resource "aws_iam_role_policy_attachment" "attach_codebuild_default_policy" {
 
 # Create a shared AWS CodeBuild role to attach to all CodeBuild projects
 resource "aws_iam_role" "eks_shared_codebuild_role" {
-  name = "${var.prefix_tag}_eks_shared-codebuild"
+  name = "${var.prefix_tag}_eks-shared-codebuild"
   assume_role_policy = file("policies/codebuild-service-trust.json")
+  path = "/service-role/"
 }
 
 # Attach default policy to shared EKS CodeBuild role
