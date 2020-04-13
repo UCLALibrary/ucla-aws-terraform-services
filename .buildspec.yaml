@@ -9,7 +9,6 @@ env:
 phases:
   install:
     commands:
-      - echo test
       - apk add --update curl py-pip jq
       - pip install awscli
   build:
