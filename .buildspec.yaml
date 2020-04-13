@@ -17,6 +17,7 @@ phases:
       - pwd
       - ls -la
       - cd environments/test/k8s
+      - terraform init
       - terraform apply --auto-approve -var-file=test.tfvars -var "cantaloupe_deployment_container_image_version=4.1.3"
       - kubectl version
       - kubectl get deployments -n test-iiif
