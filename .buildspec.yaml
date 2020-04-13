@@ -14,8 +14,10 @@ phases:
       - aws sts get-caller-identity
       - aws eks update-kubeconfig --name test-iiif-cluster --region us-west-2 --role-arn arn:aws:iam::053298376377:role/ucla-terraform_iiif-k8s-deployment-robot
       - terraform version
+      - pwd
+      - ls -la
       - kubectl version
-      - kubectl get deployments --all-namespaces
+      - kubectl get deployments -n test-iiif
       - kubectl -n test-iiif rollout restart deployment/cantaloupe-deployment
       - kubectl -n test-iiif rollout status deployment/cantaloupe-deployment
 #      - kubectl -n $NAMESPACE get deployments
