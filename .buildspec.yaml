@@ -5,9 +5,8 @@ env:
   variables:
     K8S_DEPLOYMENT_APP: "cantaloupe"
     K8S_NAMESPACE: "test-iiif"
-    K8S_DEPLOYMENT_CANTALOUPE_CONTAINER_IMAGE_TAG: "4.1.4"
+    K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG: "latest"
     K8S_DEPLOYMENT_CANTALOUPE_STABLE_CONTAINER_IMAGE_TAG: "4.1.4"
-    K8S_DEPLOYMENT_FESTER_CONTAINER_IMAGE_TAG: "latest"
     K8S_TEST_CLUSTER: "test-iiif-cluster"
     K8S_PROD_CLUSTER: "prod-iiif-cluster"
   parameter-store:
@@ -73,12 +72,12 @@ phases:
           if [ "${K8S_DEPLOYMENT_APP}" = "cantaloupe" ] ; then
             terraform apply --auto-approve \
             -var-file=$TF_ENV_SUBPATH.tfvars \
-            -var "cantaloupe_deployment_container_image_version=${K8S_DEPLOYMENT_CANTALOUPE_CONTAINER_IMAGE_TAG}" \
+            -var "cantaloupe_deployment_container_image_version=${K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG}" \
             -var "cantaloupe_deployment_s3_access_key=${CANTALOUPE_S3_ACCESS_KEY}" \
             -var "cantaloupe_deployment_s3_secret_key=${CANTALOUPE_S3_SECRET_KEY}" \
             -var "cantaloupe_deployment_admin_password=${CANTALOUPE_ADMIN_PASSWORD}" \
             -target="kubernetes_deployment.${K8S_DEPLOYMENT_APP}"
-            if [ "${K8S_DEPLOYMENT_CANTALOUPE_CONTAINER_IMAGE_TAG}" = "${K8S_DEPLOYMENT_CANTALOUPE_STABLE_CONTAINER_IMAGE_TAG}" ] && [ $? != 0 ] ; then
+            if [ "${K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG}" = "${K8S_DEPLOYMENT_CANTALOUPE_STABLE_CONTAINER_IMAGE_TAG}" ] && [ $? != 0 ] ; then
               kubectl -n ${K8S_NAMESPACE} rollout restart deployment/${K8S_DEPLOYMENT_APP}
             fi
           fi
@@ -87,12 +86,12 @@ phases:
           if [ "${K8S_DEPLOYMENT_APP}" = "fester" ] ; then
             terraform apply --auto-approve \
             -var-file=$TF_ENV_SUBPATH.tfvars \
-            -var "fester_deployment_container_image_version=${K8S_DEPLOYMENT_FESTER_CONTAINER_IMAGE_TAG}" \
+            -var "fester_deployment_container_image_version=${K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG}" \
             -var "fester_deployment_s3_access_key=${FESTER_S3_ACCESS_KEY}" \
             -var "fester_deployment_s3_secret_key=${FESTER_S3_SECRET_KEY}" \
             -target="kubernetes_deployment.${K8S_DEPLOYMENT_APP}"
             # If this is using latest, Terraform won't redeploy the deployment. The rollout mechanism for kubectl is used to supplement redeployments of latest tags
-            if [ "${K8S_DEPLOYMENT_FESTER_CONTAINER_IMAGE_TAG}" = "latest" ] && [ $? != 0 ] ; then
+            if [ "${K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG}" = "latest" ] && [ $? != 0 ] ; then
               kubectl -n ${K8S_NAMESPACE} rollout restart deployment/${K8S_DEPLOYMENT_APP}
             fi
           fi
