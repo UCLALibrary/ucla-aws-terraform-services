@@ -8,5 +8,4 @@
 *secrets.tfvars
 *deploy.plan
 .vscode
-
 *.vault
