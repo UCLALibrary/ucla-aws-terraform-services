@@ -42,18 +42,17 @@ phases:
       - |
           TF_ENV_SUBPATH=$(echo "${K8S_NAMESPACE}" | cut -d '-' -f1)
           if [ "${TF_ENV_SUBPATH}" = "prod" ] ; then
-            CANTALOUPE_S3_ACCESS_KEY = "${K8S_PROD_CANTALOUPE_S3_ACCESS_KEY}"
-            TESTVAR = "${K8S_PROD_CANTALOUPE_S3_ACCESS_KEY}"
-            CANTALOUPE_S3_SECRET_KEY = "${K8S_PROD_CANTALOUPE_S3_SECRET_KEY}"
-            CANTALOUPE_ADMIN_PASSWORD = "${K8S_PROD_CANTALOUPE_ADMIN_PASSWORD}"
-            FESTER_S3_ACCESS_KEY = "${K8S_PROD_CANTALOUPE_S3_ACCESS_KEY}"
-            FESTER_S3_SECRET_KEY = "${K8S_PROD_CANTALOUPE_S3_SECRET_KEY}"
+            CANTALOUPE_S3_ACCESS_KEY="${K8S_PROD_CANTALOUPE_S3_ACCESS_KEY}"
+            CANTALOUPE_S3_SECRET_KEY="${K8S_PROD_CANTALOUPE_S3_SECRET_KEY}"
+            CANTALOUPE_ADMIN_PASSWORD="${K8S_PROD_CANTALOUPE_ADMIN_PASSWORD}"
+            FESTER_S3_ACCESS_KEY="${K8S_PROD_CANTALOUPE_S3_ACCESS_KEY}"
+            FESTER_S3_SECRET_KEY="${K8S_PROD_CANTALOUPE_S3_SECRET_KEY}"
           else
-            CANTALOUPE_S3_ACCESS_KEY = "${K8S_TEST_CANTALOUPE_S3_ACCESS_KEY}"
-            CANTALOUPE_S3_SECRET_KEY = "${K8S_TEST_CANTALOUPE_S3_SECRET_KEY}"
-            CANTALOUPE_ADMIN_PASSWORD = "${K8S_TEST_CANTALOUPE_ADMIN_PASSWORD}"
-            FESTER_S3_ACCESS_KEY = "${K8S_TEST_CANTALOUPE_S3_ACCESS_KEY}"
-            FESTER_S3_SECRET_KEY = "${K8S_TEST_CANTALOUPE_S3_SECRET_KEY}"
+            CANTALOUPE_S3_ACCESS_KEY="${K8S_TEST_CANTALOUPE_S3_ACCESS_KEY}"
+            CANTALOUPE_S3_SECRET_KEY="${K8S_TEST_CANTALOUPE_S3_SECRET_KEY}"
+            CANTALOUPE_ADMIN_PASSWORD="${K8S_TEST_CANTALOUPE_ADMIN_PASSWORD}"
+            FESTER_S3_ACCESS_KEY="${K8S_TEST_CANTALOUPE_S3_ACCESS_KEY}"
+            FESTER_S3_SECRET_KEY="${K8S_TEST_CANTALOUPE_S3_SECRET_KEY}"
           fi
           cd environments/$TF_ENV_SUBPATH/k8s && terraform init
           if [ "${K8S_DEPLOYMENT_APP}" = "cantaloupe" ] ; then
@@ -65,9 +64,6 @@ phases:
             -var "cantaloupe_deployment_admin_password=${CANTALOUPE_ADMIN_PASSWORD}"
             -target="kubernetes_deployment.${K8S_DEPLOYMENT_APP}"
           fi
-          echo "KEY: $CANTALOUPE_S3_ACCESS_KEY"
-          echo "KEY: $TF_ENV_SUBPATH"
-          echo "KEY: $TESTVAR"
           if [ "${K8S_DEPLOYMENT_APP}" = "fester" ] ; then
             terraform apply --auto-approve \
             -var-file=$TF_ENV_SUBPATH.tfvars \
@@ -79,4 +75,3 @@ phases:
           if [ "${K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG}" = "latest" ] ; then
             kubectl -n ${K8S_NAMESPACE} rollout restart deployment/${K8S_DEPLOYMENT_APP}
           fi
-          echo "KEY: ${CANTALOUPE_S3_ACCESS_KEY}"
