@@ -7,7 +7,6 @@ cantaloupe_deployment_name = "cantaloupe"
 cantaloupe_deployment_labels = {
   app = "cantaloupe"
 }
-cantaloupe_deployment_image_pull_secrets = "services-dockerhub-creds"
 cantaloupe_deployment_container_image_url = "uclalibrary/cantaloupe-ucla"
 cantaloupe_deployment_container_image_version = "4.1.4"
 cantaloupe_deployment_container_name = "cantaloupe"
@@ -22,7 +21,6 @@ fester_deployment_name = "fester"
 fester_deployment_labels = {
   app = "fester"
 }
-fester_deployment_image_pull_secrets = "services-dockerhub-creds"
 fester_deployment_container_image_url = "uclalibrary/fester"
 fester_deployment_container_image_version = "latest"
 fester_deployment_container_name = "fester"
