@@ -76,7 +76,6 @@ variable "cantaloupe_deployment_container_env" {
     CANTALOUPE_S3SOURCE_BASICLOOKUPSTRATEGY_PATH_SUFFIX = ".jpx"
     CANTALOUPE_SOURCE_STATIC = "S3Source"
     JAVA_HEAP_SIZE = "4g"
-
   }
 }
 
