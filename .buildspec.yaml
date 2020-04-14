@@ -62,7 +62,7 @@ phases:
             -var "cantaloupe_deployment_s3_access_key=${CANTALOUPE_S3_ACCESS_KEY}" \
             -var "cantaloupe_deployment_s3_secret_key=${CANTALOUPE_S3_SECRET_KEY}" \
             -var "cantaloupe_deployment_admin_password=${CANTALOUPE_ADMIN_PASSWORD}"
-            -target="kubernetes_deployment.${K8S_DEPLOYMENT_APP}"
+            -target="kubernetes_deployment.cantaloupe"
           fi
           if [ "${K8S_DEPLOYMENT_APP}" = "fester" ] ; then
             terraform apply --auto-approve \
