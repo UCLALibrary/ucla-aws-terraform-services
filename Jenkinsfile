@@ -12,7 +12,7 @@ pipeline {
               credentialsType: "jenkins",
               sourceControlType: "project",
               sourceVersion: "IIIF-645",
-              envVariables: "[ { K8S_DEPLOYMENT_APP, ${DEPLOYMENT_APP} }, { K8S_CONTAINER_IMAGE_TAG, ${CONTAINER_TAG}, { K8S_NAMESPACE, ${NAMESPACE} } ]"
+              envVariables: "[ { K8S_DEPLOYMENT_APP, ${DEPLOYMENT_APP} }, { K8S_CONTAINER_IMAGE_TAG, ${CONTAINER_TAG} }, { K8S_NAMESPACE, ${NAMESPACE} } ]"
             )
             }
           }
