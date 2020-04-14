@@ -55,6 +55,7 @@ phases:
             FESTER_S3_SECRET_KEY = "${K8S_TEST_CANTALOUPE_S3_SECRET_KEY}"
           fi
           cd environments/$TF_ENV_SUBPATH/k8s && terraform init
+          echo "${CANTALOUPE_S3_ACCESS_KEY}"
           if [ "${K8S_DEPLOYMENT_APP}" = "cantaloupe" ] ; then
             terraform apply --auto-approve \
             -var-file=$TF_ENV_SUBPATH.tfvars \
