@@ -69,7 +69,7 @@ phases:
           cd environments/$TF_ENV_SUBPATH/k8s && terraform init
 
           # If this is a container deployment, set a stable tag instead of latest
-          if [ "K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG = "latest" ] ; then
+          if [ "${K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG}" = "latest" ] ; then
             CANTALOUPE_TAG="${K8S_DEPLOYMENT_CANTALOUPE_STABLE_CONTAINER_IMAGE_TAG}"
           else
             CANTALOUPE_TAG="${K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG}"
