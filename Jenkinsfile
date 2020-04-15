@@ -11,7 +11,7 @@ pipeline {
               region: "us-east-1",
               credentialsType: "jenkins",
               sourceControlType: "project",
-              sourceVersion: "IIIF-645",
+              sourceVersion: "master",
               envVariables: "[ { K8S_DEPLOYMENT_APP, ${DEPLOYMENT_APP} }, { K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG, ${CONTAINER_TAG} }, { K8S_NAMESPACE, ${NAMESPACE} } ]"
             )
             }
