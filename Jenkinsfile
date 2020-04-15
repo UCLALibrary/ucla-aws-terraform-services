@@ -26,7 +26,7 @@ pipeline {
                 channel: "#softwaredev-services-firehose",
                 color: "good",
                 replyBroadcast: true,
-                message: "Kubernetes Deployment - #${env.BUILD_NUMBER} ${currentBuild.currentResult} after ${currentBuild.durationString.replace(' and counting', '')} (<${env.RUN_DISPLAY_URL}|open>)",
+                message: "Kubernetes Deployment on ${NAMESPACE}: ${DEPLOYMENT_APP} with tag ${CONTAINER_TAG} - #${env.BUILD_NUMBER} ${currentBuild.currentResult} after ${currentBuild.durationString.replace(' and counting', '')} (<${env.RUN_DISPLAY_URL}|open>)",
                 tokenCredentialId: "95231ecb-a041-445b-84c0-870db41e2ba8",
                 teamDomain: "uclalibrary"
             )
@@ -36,7 +36,7 @@ pipeline {
                 channel: "#softwaredev-services-firehose",
                 color: "danger",
                 replyBroadcast: true,
-                message: "Kubernetes Deployment - #${env.BUILD_NUMBER} ${currentBuild.currentResult} after ${currentBuild.durationString.replace(' and counting', '')} (<${env.RUN_DISPLAY_URL}|open>)",
+                message: "Kubernetes Deployment on ${NAMESPACE}: ${DEPLOYMENT_APP} with tag ${CONTAINER_TAG} - #${env.BUILD_NUMBER} ${currentBuild.currentResult} after ${currentBuild.durationString.replace(' and counting', '')} (<${env.RUN_DISPLAY_URL}|open>)",
                 tokenCredentialId: "95231ecb-a041-445b-84c0-870db41e2ba8",
                 teamDomain: "uclalibrary"
             )
