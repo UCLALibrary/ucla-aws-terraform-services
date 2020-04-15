@@ -83,6 +83,9 @@ phases:
             -var "cantaloupe_deployment_s3_secret_key=${CANTALOUPE_S3_SECRET_KEY}" \
             -var "cantaloupe_deployment_admin_password=${CANTALOUPE_ADMIN_PASSWORD}" \
             -target="kubernetes_deployment.${K8S_DEPLOYMENT_APP}"
+            if [ $? != 0 ] ; then
+              exit 1
+            fi
             if [ "${CANTALOUPE_TAG}" = "${K8S_DEPLOYMENT_CANTALOUPE_STABLE_CONTAINER_IMAGE_TAG}" ] && [ $? != 0 ] ; then
               kubectl -n ${K8S_NAMESPACE} rollout restart deployment/${K8S_DEPLOYMENT_APP}
             fi
@@ -96,8 +99,11 @@ phases:
             -var "fester_deployment_s3_access_key=${FESTER_S3_ACCESS_KEY}" \
             -var "fester_deployment_s3_secret_key=${FESTER_S3_SECRET_KEY}" \
             -target="kubernetes_deployment.${K8S_DEPLOYMENT_APP}"
+            if [ $? != 0 ] ; then
+              exit 1
+            fi
             # If this is using latest, Terraform won't redeploy the deployment. The rollout mechanism for kubectl is used to supplement redeployments of latest tags
-            if [ "${K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG}" = "latest" ] && [ $? != 0 ] ; then
+            if [ "${K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG}" = "latest" ] && [ $? = 0 ] ; then
               kubectl -n ${K8S_NAMESPACE} rollout restart deployment/${K8S_DEPLOYMENT_APP}
             fi
           fi
