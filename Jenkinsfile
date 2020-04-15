@@ -1,26 +1,25 @@
 pipeline {
     agent any
     stages {
-      stage("Deploying to EKS") {
-        parallel {
-          stage("Deploy via AWS CodeBuild") {
-            steps {
-              awsCodeBuild(
-              projectName: "iiif-k8s-deployment",
-              credentialsId: "services-team-jenkins-codebuild-trigger ",
-              region: "us-east-1",
-              credentialsType: "jenkins",
-              sourceControlType: "project",
-              sourceVersion: "master",
-              envVariables: "[ { K8S_DEPLOYMENT_APP, ${DEPLOYMENT_APP} }, { K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG, ${CONTAINER_TAG} }, { K8S_NAMESPACE, ${NAMESPACE} } ]"
-            )
+        stage("Deploying to EKS") {
+            parallel {
+                stage("Deploy via AWS CodeBuild") {
+                    steps {
+                        awsCodeBuild(
+                            projectName: "iiif-k8s-deployment",
+                            credentialsId: "services-team-jenkins-codebuild-trigger ",
+                            region: "us-east-1",
+                            credentialsType: "jenkins",
+                            sourceControlType: "project",
+                            sourceVersion: "IIIF-645",
+                            envVariables: "[ { K8S_DEPLOYMENT_APP, ${DEPLOYMENT_APP} }, { K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG, ${CONTAINER_TAG} }, { K8S_NAMESPACE, ${NAMESPACE} } ]"
+                        )
+                    }
+                }
             }
-          }
         }
-      }
     }
     post {
-        // send build result notifications
         success {
             slackSend (
                 channel: "#softwaredev-services-firehose",
