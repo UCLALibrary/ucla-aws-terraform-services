@@ -13,6 +13,11 @@ variable "iiif_k8s_secure_ssm_parameters_map" {
   default = {}
 }
 
+variable "dockerhub_secure_ssm_parameters_map" {
+  type = map
+  default = {}
+}
+
 locals {
-  iiif_k8s_ssm_parameters_merged = merge("${var.iiif_k8s_ssm_parameters_map}", "${var.iiif_k8s_secure_ssm_parameters_map}")
+  iiif_k8s_ssm_parameters_merged = merge("${var.iiif_k8s_ssm_parameters_map}", "${var.iiif_k8s_secure_ssm_parameters_map}", "${var.dockerhub_secure_ssm_parameters_map}")
 }
