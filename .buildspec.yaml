@@ -63,8 +63,8 @@ phases:
             CANTALOUPE_S3_ACCESS_KEY="${K8S_TEST_CANTALOUPE_S3_ACCESS_KEY}"
             CANTALOUPE_S3_SECRET_KEY="${K8S_TEST_CANTALOUPE_S3_SECRET_KEY}"
             CANTALOUPE_ADMIN_PASSWORD="${K8S_TEST_CANTALOUPE_ADMIN_PASSWORD}"
-            FESTER_S3_ACCESS_KEY="${K8S_TEST_CANTALOUPE_S3_ACCESS_KEY}"
-            FESTER_S3_SECRET_KEY="${K8S_TEST_CANTALOUPE_S3_SECRET_KEY}"
+            FESTER_S3_ACCESS_KEY="${K8S_TEST_FESTER_S3_ACCESS_KEY}"
+            FESTER_S3_SECRET_KEY="${K8S_TEST_FESTER_S3_SECRET_KEY}"
           fi
 
           # Change into the prod or test terraform environment and initialize necessary Terraform providers
