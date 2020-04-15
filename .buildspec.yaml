@@ -76,7 +76,7 @@ phases:
           fi
           # Check if this a Cantaloupe deployment, if so, use the corresponding Terraform command to support variables with previously defined stored secret
           if [ "${K8S_DEPLOYMENT_APP}" = "cantaloupe" ] ; then
-            terraform apply --auto-approve \
+            terraform apply -compact-warnings --auto-approve \
             -var-file=$TF_ENV_SUBPATH.tfvars \
             -var "cantaloupe_deployment_container_image_version=${CANTALOUPE_TAG}" \
             -var "cantaloupe_deployment_s3_access_key=${CANTALOUPE_S3_ACCESS_KEY}" \
@@ -90,7 +90,7 @@ phases:
 
           # Check if this a Fester deployment, if so, use the corresponding Terraform command to support variables with previously defined stored secret
           if [ "${K8S_DEPLOYMENT_APP}" = "fester" ] ; then
-            terraform apply --auto-approve \
+            terraform apply -compact-warnings --auto-approve \
             -var-file=$TF_ENV_SUBPATH.tfvars \
             -var "fester_deployment_container_image_version=${K8S_DEPLOYMENT_CONTAINER_IMAGE_TAG}" \
             -var "fester_deployment_s3_access_key=${FESTER_S3_ACCESS_KEY}" \
