@@ -23,7 +23,7 @@ pipeline {
         // send build result notifications
         success {
             slackSend (
-                channel: "@avuong",
+                channel: "#softwaredev-services-firehose",
                 color: "good",
                 replyBroadcast: true,
                 message: "Kubernetes deployment on ${NAMESPACE}: ${DEPLOYMENT_APP} with tag ${CONTAINER_TAG} - #${env.BUILD_NUMBER} ${currentBuild.currentResult} after ${currentBuild.durationString.replace(' and counting', '')} (<${env.RUN_DISPLAY_URL}|open>)",
@@ -33,7 +33,7 @@ pipeline {
         }
         failure {
             slackSend (
-                channel: "@avuong",
+                channel: "#softwaredev-services-firehose",
                 color: "danger",
                 replyBroadcast: true,
                 message: "Kubernetes deployment on ${NAMESPACE}: ${DEPLOYMENT_APP} with tag ${CONTAINER_TAG} - #${env.BUILD_NUMBER} ${currentBuild.currentResult} after ${currentBuild.durationString.replace(' and counting', '')} (<${env.RUN_DISPLAY_URL}|open>)",
