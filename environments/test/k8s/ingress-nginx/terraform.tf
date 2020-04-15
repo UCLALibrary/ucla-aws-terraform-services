@@ -4,7 +4,7 @@ terraform {
     encrypt = true
     bucket = "prod-services-terraform-state"
     region = "us-west-2"
-    key = "test/eks-cantaloupe-deployment"
+    key = "test/eks_ingress-nginx"
     dynamodb_table = "prod-services-terraform-state-lock"
   }
 }
