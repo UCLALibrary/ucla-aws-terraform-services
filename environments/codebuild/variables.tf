@@ -1,13 +1,18 @@
-variable "region" { default = "us-east-1" }
-variable "codebuild_project_name" {}
-variable "codebuild_project_description" {}
-variable "codebuild_project_timeout_minutes" {}
-variable "codebuild_project_image" {}
-
-variable "ssm_parameters_map" { type = map }
-variable "secure_ssm_parameters_map" { type = map }
-
-locals {
-  ssm_parameters_merged = merge("${var.ssm_parameters_map}", "${var.secure_ssm_parameters_map}")
+variable "aws_region" {
+  type = string
+  default = "us-east-1"
 }
 
+variable "iiif_k8s_ssm_parameters_map" {
+  type = map
+  default = {}
+}
+
+variable "iiif_k8s_secure_ssm_parameters_map" {
+  type = map
+  default = {}
+}
+
+locals {
+  iiif_k8s_ssm_parameters_merged = merge("${var.iiif_k8s_ssm_parameters_map}", "${var.iiif_k8s_secure_ssm_parameters_map}")
+}
