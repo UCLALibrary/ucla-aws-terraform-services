@@ -2,6 +2,8 @@ data "aws_availability_zones" "available" {}
 
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_main_cidr_block
+
+  tags = var.vpc_tag
 }
 
 resource "aws_internet_gateway" "igw" {
