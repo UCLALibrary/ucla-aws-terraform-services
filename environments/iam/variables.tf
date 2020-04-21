@@ -22,3 +22,28 @@ variable "prefix_tag" {
   type = string
   default = "terraform"
 }
+
+variable "eks_iam_policy_attachment_service_policy_arn" {
+  type = string
+  default = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
+}
+
+variable "eks_iam_policy_attachment_cluster_policy_arn" {
+  type = string
+  default = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
+
+variable "eks_nodegroup_iam_policy_attachment_workernode_policy_arn" {
+  type = string
+  default = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+variable "eks_nodegroup_iam_policy_attachment_cni_policy_arn" {
+  type = string
+  default = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+variable "eks_nodegroup_iam_policy_attachment_ecr_policy" {
+  type = string
+  default = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
