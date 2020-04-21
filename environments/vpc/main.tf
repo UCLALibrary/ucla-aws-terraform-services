@@ -101,7 +101,7 @@ resource "aws_route_table" "nat_egress_global" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.ngw.id
+    nat_gateway_id = aws_nat_gateway.ngw.id
   }
 }
 
