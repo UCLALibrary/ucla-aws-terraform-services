@@ -49,7 +49,7 @@ resource "aws_subnet" "eks_test_private" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
 
-  tags = merge(var.vpc_tag, var.test_eks_private_vpc_tag)
+  tags = merge(var.vpc_tag, var.prod_eks_private_vpc_tag)
 }
 
 resource "aws_subnet" "lambda_prod_private" {
@@ -188,10 +188,4 @@ resource "aws_vpc_endpoint" "s3" {
   service_name = "com.amazonaws.us-west-2.s3"
 
   tags = var.vpc_tag
-}
-
-resource "aws_vpc_endpoint_route_table_association" "vpc_s3_associate" {
-  for_each = toset(aws_route_table.iiif_routes.*.id)
-  route_table_id  = each.key
-  vpc_endpoint_id = aws_vpc_endpoint.s3.id
 }
