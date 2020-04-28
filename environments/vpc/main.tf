@@ -19,7 +19,7 @@ resource "aws_subnet" "eks_prod_public" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
 
-  tags = merge(var.vpc_tag, var.prod_eks_vpc_tag)
+  tags = merge(var.vpc_tag, var.prod_eks_public_vpc_tag)
 }
 
 resource "aws_subnet" "eks_test_public" {
@@ -29,7 +29,7 @@ resource "aws_subnet" "eks_test_public" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
 
-  tags = merge(var.vpc_tag, var.test_eks_vpc_tag)
+  tags = merge(var.vpc_tag, var.test_eks_public_vpc_tag)
 }
 
 resource "aws_subnet" "eks_prod_private" {
@@ -38,6 +38,8 @@ resource "aws_subnet" "eks_prod_private" {
   cidr_block              = var.eks_prod_private_subnets[count.index]
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
+
+  tags = merge(var.vpc_tag, var.prod_eks_private_vpc_tag)
 }
 
 resource "aws_subnet" "eks_test_private" {
@@ -46,6 +48,8 @@ resource "aws_subnet" "eks_test_private" {
   cidr_block              = var.eks_test_private_subnets[count.index]
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
+
+  tags = merge(var.vpc_tag, var.test_eks_private_vpc_tag)
 }
 
 resource "aws_subnet" "lambda_prod_private" {
@@ -81,6 +85,16 @@ resource "aws_nat_gateway" "ngw" {
   subnet_id = aws_subnet.gp_public[0].id
 }
 
+resource "aws_route_table" "public_igw_egress" {
+  vpc_id                  = aws_vpc.main.id
+  route {
+    cidr_block            = "0.0.0.0/0"
+    gateway_id            = aws_internet_gateway.igw.id
+  }
+
+  tags = var.vpc_tag
+}
+
 resource "aws_route_table" "iiif_routes" {
   vpc_id = aws_vpc.main.id
 
@@ -96,6 +110,8 @@ resource "aws_route_table" "iiif_routes" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
   }
+
+  tags = var.vpc_tag
 }
 
 resource "aws_route_table" "nat_egress_global" {
@@ -105,6 +121,14 @@ resource "aws_route_table" "nat_egress_global" {
     cidr_block = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.ngw.id
   }
+
+  tags = var.vpc_tag
+}
+
+resource "aws_route_table_association" "route_public_subnets_igw" {
+  for_each = toset(concat(aws_subnet.eks_prod_public.*.id, aws_subnet.eks_test_public.*.id, aws_subnet.gp_public.*.id))
+  subnet_id = each.key
+  route_table_id = aws_route_table.public_igw_egress.id
 }
 
 resource "aws_route_table_association" "attach_eks_nodegroup_iiif_routes" {
@@ -157,4 +181,17 @@ resource "aws_security_group" "ucla_library" {
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id       = aws_vpc.main.id
+  service_name = "com.amazonaws.us-west-2.s3"
+
+  tags = var.vpc_tag
+}
+
+resource "aws_vpc_endpoint_route_table_association" "vpc_s3_associate" {
+  for_each = toset(aws_route_table.iiif_routes.*.id)
+  route_table_id  = each.key
+  vpc_endpoint_id = aws_vpc_endpoint.s3.id
 }

@@ -70,14 +70,30 @@ variable "vpc_tag" {
   }
 }
 
-variable "prod_eks_vpc_tag" {
+variable "prod_eks_public_vpc_tag" {
+  type = map
+  default = {
+    "kubernetes.io/role/elb" = "1"
+    "kubernetes.io/cluster/prod-services_cluster" = "shared"
+  }
+}
+
+variable "test_eks_public_vpc_tag" {
+  type = map
+  default = {
+    "kubernetes.io/role/elb" = "1"
+    "kubernetes.io/cluster/test-services_cluster" = "shared"
+  }
+}
+
+variable "prod_eks_private_vpc_tag" {
   type = map
   default = {
     "kubernetes.io/cluster/prod-services_cluster" = "shared"
   }
 }
 
-variable "test_eks_vpc_tag" {
+variable "test_eks_private_vpc_tag" {
   type = map
   default = {
     "kubernetes.io/cluster/test-services_cluster" = "shared"

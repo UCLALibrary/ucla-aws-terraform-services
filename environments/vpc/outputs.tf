@@ -14,7 +14,7 @@ output "eks_prod_private_subnet_ids" {
   value = aws_subnet.eks_prod_private.*.id
 }
 
-output "eks_private_public_subnet_ids" {
+output "eks_test_private_subnet_ids" {
   value = aws_subnet.eks_test_private.*.id
 }
 
