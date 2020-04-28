@@ -32,7 +32,7 @@ resource "kubernetes_secret" "test_iiif_tls_secret" {
 }
 
 module "cantaloupe" {
-  source = "git::https://github.com/UCLALibrary/terraform-kubernetes-cantaloupe.git?ref=IIIF-773"
+  source = "git::https://github.com/UCLALibrary/terraform-kubernetes-cantaloupe.git"
   cantaloupe_deployment_namespace = kubernetes_namespace.namespace.metadata[0].name
   cantaloupe_deployment_replicas = var.cantaloupe_deployment_replicas
   image_pull_secrets = kubernetes_secret.dockerhub_registry.metadata[0].name
@@ -50,7 +50,7 @@ module "cantaloupe" {
 }
 
 module "fester" {
-  source = "git::https://github.com/UCLALibrary/terraform-kubernetes-fester.git?ref=IIIF-773"
+  source = "git::https://github.com/UCLALibrary/terraform-kubernetes-fester.git"
   fester_deployment_namespace = kubernetes_namespace.namespace.metadata[0].name
   fester_deployment_replicas = var.fester_deployment_replicas
   image_pull_secrets = kubernetes_secret.dockerhub_registry.metadata[0].name
