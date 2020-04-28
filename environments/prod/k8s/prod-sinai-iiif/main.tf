@@ -1,0 +1,83 @@
+resource "kubernetes_namespace" "namespace" {
+  metadata {
+    name = var.namespace
+  }
+}
+
+resource "kubernetes_secret" "dockerhub_registry" {
+  metadata {
+    name = var.image_pull_secrets
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+  }
+
+  data = {
+    ".dockerconfigjson" = "${jsonencode(local.dockercfg)}"
+  }
+
+  type = "kubernetes.io/dockerconfigjson"
+}
+
+resource "kubernetes_secret" "prod_sinai_iiif_tls_secret" {
+  metadata {
+    name      = "prod-sinai-iiif-tls"
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+  }
+
+  data = {
+    "tls.crt" = "${base64decode(var.prod_sinai_iiif_tls_crt)}"
+    "tls.key" = "${base64decode(var.prod_sinai_iiif_tls_key)}"
+  }
+
+  type = "kubernetes.io/tls"
+}
+
+module "cantaloupe" {
+  source = "git::https://github.com/UCLALibrary/terraform-kubernetes-cantaloupe.git"
+  cantaloupe_deployment_namespace = kubernetes_namespace.namespace.metadata[0].name
+  cantaloupe_deployment_replicas = var.cantaloupe_deployment_replicas
+  image_pull_secrets = kubernetes_secret.dockerhub_registry.metadata[0].name
+  cantaloupe_deployment_container_image_url = var.cantaloupe_deployment_container_image_url
+  cantaloupe_deployment_container_image_version = var.cantaloupe_deployment_container_image_version
+  cantaloupe_deployment_container_port = var.cantaloupe_deployment_container_port
+  cantaloupe_deployment_container_env = var.cantaloupe_deployment_container_env
+  cantaloupe_deployment_s3_access_key = var.cantaloupe_deployment_s3_access_key
+  cantaloupe_deployment_s3_secret_key = var.cantaloupe_deployment_s3_secret_key
+  cantaloupe_deployment_admin_password = var.cantaloupe_deployment_admin_password
+  cantaloupe_deployment_cpu_limit = var.cantaloupe_deployment_cpu_limit
+  cantaloupe_deployment_cpu_request = var.cantaloupe_deployment_cpu_request
+  cantaloupe_deployment_memory_limit = var.cantaloupe_deployment_memory_limit
+  cantaloupe_deployment_memory_request = var.cantaloupe_deployment_memory_request
+}
+
+resource "kubernetes_ingress" "prod-sinai-iiif" {
+  metadata {
+    name = "prod-sinai-iiif"
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+    annotations = {
+      "nginx.ingress.kubernetes.io/use-regex" = "true"
+      "nginx.ingress.kubernetes.io/enable-cors" = "true"
+      "nginx.ingress.kubernetes.io/ssl-passthrough" = "false"
+      "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
+      "nginx.ingress.kubernetes.io/cors-allow-methods" = "GET,HEAD,PUT,POST,DELETE"
+    }
+  }
+
+  spec {
+    tls {
+      secret_name = kubernetes_secret.prod_sinai_iiif_tls_secret.metadata[0].name
+      hosts = ["iiif.sinaimanuscriptslibrary.ucla.edu"]
+    }
+
+    rule {
+      host = "iiif.sinaimanuscripts.library.ucla.edu"
+      http {
+        path {
+          backend {
+            service_name = module.cantaloupe.cantaloupe_service_name
+            service_port = module.cantaloupe.cantaloupe_service_port
+          }
+        }
+      }
+    }
+  }
+}
