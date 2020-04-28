@@ -108,7 +108,7 @@ variable "cantaloupe_deployment_memory_limit" {
 
 variable "cantaloupe_deployment_memory_request" {
   type = string
-  default = "256Mi"
+  default = "128Mi"
 }
 
 locals {
