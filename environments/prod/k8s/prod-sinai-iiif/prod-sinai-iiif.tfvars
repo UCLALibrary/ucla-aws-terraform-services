@@ -22,10 +22,10 @@ cantaloupe_deployment_container_env = {
   CANTALOUPE_S3SOURCE_BASICLOOKUPSTRATEGY_PATH_SUFFIX = ".jpx"
   CANTALOUPE_SOURCE_STATIC = "S3Source"
   CANTALOUPE_MAX_PIXELS = 0
-  JAVA_HEAP_SIZE = "4g"
+  JAVA_HEAP_SIZE = "10g"
   DELEGATE_URL = "https://raw.githubusercontent.com/UCLALibrary/cantaloupe-delegate/master/lib/delegates.rb"
 }
-cantaloupe_deployment_cpu_limit = "4"
-cantaloupe_deployment_cpu_request = "1.0"
-cantaloupe_deployment_memory_limit = "4096Mi"
-cantaloupe_deployment_memory_request = "1024Mi"
+cantaloupe_deployment_cpu_limit = "6"
+cantaloupe_deployment_cpu_request = "0.5"
+cantaloupe_deployment_memory_limit = "10Gi"
+cantaloupe_deployment_memory_request = "1Gi"
