@@ -1,9 +1,7 @@
-# Terraform Configs
-terraform_remote_hostname             = "app.terraform.io"
-terraform_remote_organization         = "UCLALibrary"
-terraform_remote_networking_workspace = "test-eks-network"
-terraform_remote_iam_workspace        = "test-eks-iam"
-
-# EKS Configuration
+prefix_tag = "test-services"
 eks_version = 1.15
 
+nodegroup_instance_types = ["m5a.2xlarge"]
+node_desired_size = 2
+node_max_size = 2
+node_min_size = 2
