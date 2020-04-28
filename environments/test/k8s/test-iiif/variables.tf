@@ -50,7 +50,7 @@ variable "cantaloupe_deployment_container_image_url" {
 
 variable "cantaloupe_deployment_container_image_version" {
   type = string
-  default = "4.1.4"
+  default = "4.1.5"
 }
 
 variable "cantaloupe_deployment_container_port" {
