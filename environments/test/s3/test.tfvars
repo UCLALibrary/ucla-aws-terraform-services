@@ -1,0 +1,5 @@
+cantaloupe_s3_source_bucket = "test-iiif-cantaloupe-source"
+cantaloupe_s3_cache_bucket = "test-iiif-cantaloupe-cache"
+fester_s3_source_bucket = "test-iiif-fester-source"
+kakadu_converter_s3_tiff_source_bucket = "test-bucketeer-tiff-lambda"
+kakadu_converter_s3_tiff_source_bucket_region = "us-west-2"
