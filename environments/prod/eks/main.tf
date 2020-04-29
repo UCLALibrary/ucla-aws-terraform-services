@@ -7,6 +7,13 @@ resource "aws_eks_cluster" "eks_cluster" {
   vpc_config {
     subnet_ids = concat(data.terraform_remote_state.vpc.outputs.eks_prod_private_subnet_ids, data.terraform_remote_state.vpc.outputs.eks_prod_public_subnet_ids)
   }
+
+  depends_on = [aws_cloudwatch_log_group.control_plane]
+}
+
+resource "aws_cloudwatch_log_group" "control_plane" {
+  name              = "/aws/eks/${var.prefix_tag}_cluster/cluster"
+  retention_in_days = 30
 }
 
 # This data requires OpenSSL and tac installed on the runner
