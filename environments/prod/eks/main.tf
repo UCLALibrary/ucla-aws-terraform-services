@@ -12,7 +12,7 @@ resource "aws_eks_cluster" "eks_cluster" {
 }
 
 resource "aws_cloudwatch_log_group" "control_plane" {
-  name              = "/aws/eks/${var.prefix_tag}_cluster/cluster"
+  name = "/aws/eks/${var.prefix_tag}_cluster/cluster"
   retention_in_days = 30
 }
 
