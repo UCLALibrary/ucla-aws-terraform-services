@@ -18,21 +18,6 @@ variable "prod-iiif_fester_s3_source_bucket" {
   default = "festersourcebucket"
 }
 
-variable "stage-iiif_cantaloupe_s3_cache_bucket" {
-  type = string
-  default = "cantaloupecachebucket"
-}
-
-variable "stage-iiif_cantaloupe_s3_source_bucket" {
-  type = string
-  default = "cantaloupesourcebucket"
-}
-
-variable "stage-iiif_fester_s3_source_bucket" {
-  type = string
-  default = "festersourcebucket"
-}
-
 variable "prod-sinai-iiif_cantaloupe_s3_cache_bucket" {
   type = string
   default = "cantaloupecachebucket"
@@ -41,11 +26,6 @@ variable "prod-sinai-iiif_cantaloupe_s3_cache_bucket" {
 variable "prod-sinai-iiif_cantaloupe_s3_source_bucket" {
   type = string
   default = "cantaloupesourcebucket"
-}
-
-variable "prod-sinai-iiif_fester_s3_source_bucket" {
-  type = string
-  default = "festersourcebucket"
 }
 
 variable "kakadu_converter_s3_tiff_source_bucket" {
@@ -77,8 +57,6 @@ locals {
   prod-iiif_cantaloupe_s3_src_bucket = "${var.bucket_prefix}-prod-cantaloupe-src" 
   prod-iiif_cantaloupe_s3_cache_bucket = "${var.bucket_prefix}-prod-cantaloupe-cache" 
   prod-iiif_fester_s3_source_bucket = "${var.bucket_prefix}-prod-fester-src" 
-  stage-iiif_cantaloupe_s3_src_bucket = "${var.bucket_prefix}-stage-cantaloupe-src" 
-  stage-iiif_cantaloupe_s3_cache_bucket = "${var.bucket_prefix}-stage-cantaloupe-cache" 
   prod-sinai-iiif_cantaloupe_s3_src_bucket = "${var.bucket_prefix}-sinai-cantaloupe-src" 
   prod-sinai-iiif_cantaloupe_s3_cache_bucket = "${var.bucket_prefix}-sinai-cantaloupe-cache" 
   kakadu_converter_s3_tiff_source_bucket = "${var.bucket_prefix}-kakaduconverter-tiff-src" 
