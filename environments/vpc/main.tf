@@ -6,6 +6,24 @@ resource "aws_vpc" "main" {
   tags = var.vpc_tag
 }
 
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    protocol  = -1
+    self = true
+    from_port = 0
+    to_port = 0
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 
@@ -114,6 +132,23 @@ resource "aws_route_table" "iiif_routes" {
   tags = var.vpc_tag
 }
 
+resource "aws_route_table" "nat_egress_campus" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "164.67.40.0/24"
+    nat_gateway_id = aws_nat_gateway.ngw.id
+  }
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags = var.vpc_tag
+}
+
+
 resource "aws_route_table" "nat_egress_global" {
   vpc_id = aws_vpc.main.id
 
@@ -132,10 +167,17 @@ resource "aws_route_table_association" "route_public_subnets_igw" {
 }
 
 resource "aws_route_table_association" "attach_eks_nodegroup_iiif_routes" {
-  for_each = toset(concat(aws_subnet.eks_prod_private.*.id, aws_subnet.eks_test_private.*.id, aws_subnet.lambda_prod_private.*.id, aws_subnet.lambda_test_private.*.id))
+  for_each = toset(concat(aws_subnet.eks_prod_private.*.id, aws_subnet.eks_test_private.*.id))
   subnet_id = each.key
   route_table_id = aws_route_table.iiif_routes.id
 }
+
+resource "aws_route_table_association" "attach_lambda_subnets_nat_egress_campus" {
+  for_each = toset(concat(aws_subnet.lambda_prod_private.*.id, aws_subnet.lambda_test_private.*.id))
+  subnet_id = each.key
+  route_table_id = aws_route_table.nat_egress_campus.id
+}
+
 
 resource "aws_security_group" "ucla_vpn" {
   name = "ucla_vpn_list"
@@ -190,8 +232,20 @@ resource "aws_vpc_endpoint" "s3" {
   tags = var.vpc_tag
 }
 
+resource "aws_vpc_endpoint" "s3_lambda" {
+  vpc_id       = aws_vpc.main.id
+  service_name = "com.amazonaws.us-west-2.s3"
+
+  tags = var.vpc_tag
+}
+
 resource "aws_vpc_endpoint_route_table_association" "vpc_s3_associate" {
   for_each = toset(aws_route_table.iiif_routes.*.id)
   route_table_id  = each.key
   vpc_endpoint_id = aws_vpc_endpoint.s3.id
+}
+
+resource "aws_vpc_endpoint_route_table_association" "vpc_s3_associate_lambda_subnets" {
+  route_table_id  = aws_route_table.nat_egress_campus.id
+  vpc_endpoint_id = aws_vpc_endpoint.s3_lambda.id
 }

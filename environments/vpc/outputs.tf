@@ -57,3 +57,15 @@ output "sg_uclalibrary_arn" {
 output "sg_uclalibrary_name" {
   value = aws_security_group.ucla_library.name
 }
+
+output "default_sg_id" {
+  value = aws_default_security_group.default.id
+}
+
+output "default_sg_arn" {
+  value = aws_default_security_group.default.arn
+}
+
+output "default_sg_name" {
+  value = aws_default_security_group.default.name
+}
