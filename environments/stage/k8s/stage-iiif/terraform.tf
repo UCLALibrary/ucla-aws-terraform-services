@@ -4,7 +4,7 @@ terraform {
     encrypt = true
     bucket = "prod-services-terraform-state"
     region = "us-west-2"
-    key = "prod/prod-services_cluster-stage-iiif"
+    key = "stage/prod-services_cluster-stage-iiif"
     dynamodb_table = "prod-services-terraform-state-lock"
   }
 }
