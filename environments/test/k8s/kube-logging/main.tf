@@ -63,6 +63,32 @@ resource "kubernetes_config_map" "fluentd_forward_key" {
   }
 }
 
+### Expose Fluentd running pod service(s) and k8s service object
+resource "kubernetes_service" "fluentd_service" {
+  metadata {
+    name =  "fluentd-service"
+    namespace = var.namespace
+  }
+
+  spec {
+    selector = {
+      name = "fluentd-forward"
+    }
+
+    port {
+      port = 30000
+      target_port = 30000
+    }
+  }
+}
+
+data "external" "fluentd_service_cluster_ip" {
+  program = ["bash", "helpers/get_cluster_ip.sh"]
+  query = {
+    k8s_namespace = var.namespace
+  }
+}
+
 ### Create Fluentd Daemonset and expose port 30000 as local endpoint.
 ### This setup is used to forward to an external Fluentd Aggregator.
 ### Encryption via SSL/TLS is required for this setup to ensure encryption in transit.
